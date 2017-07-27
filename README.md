@@ -21,6 +21,8 @@ To build the demo, simply execute the following:
 ```bash
 git clone https://github.com/cjdb/basic_project.git
 cd basic_project
+git remote rename origin cjdb
+git remote add origin <your repository url here>
 mkdir -p build/debug
 cd build/debug
 cmake -DCMAKE_CXX_COMPILER=`which <your compiler here>` -DCMAKE_BUILD_TYPE=Debug ../..
