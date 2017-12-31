@@ -1,0 +1,54 @@
+{
+   // See https://go.microsoft.com/fwlink/?LinkId=733558
+   // for the documentation about the tasks.json format
+   "version": "2.0.0",
+   "tasks": [
+       {
+           "taskName": "Build all",
+           "program": "C:\\Windows\\sysnative\\bash.exe",
+           "options": {
+               "cwd": "path-to-project-dir/build"
+           },
+           "showOutput": "always",
+           "isBuildCommand": true,
+           "command": "make",
+           "args": ["-j", "4"],
+           "isShellCommand": true
+       },
+       {
+           "taskName": "Clean all",
+           "options": {
+               "cwd": "path-to-project-dir/build"
+           },
+           "command": "make",
+           "args": ["clean"],
+           "isShellCommand": true
+       },
+       {
+           "taskName": "Test all",
+           "options": {
+               "cwd": "path-to-project-dir/build"
+           },
+           "command": "ctest",
+           "args": ["-C", "Debug"],
+           "isShellCommand": true
+       },
+       {
+           "taskName": "Rerun CMake",
+           "options": {
+               "cwd": "path-to-project-dir/build"
+           },
+           "command": "cmake",
+           "args": ["${workspaceRoot}"],
+           "isShellCommand": true
+       }
+   ],
+   "pipeTransport": {
+       "pipeCwd": "",
+       "pipeProgram": "c:\\windows\\sysnative\\bash.exe",
+       "pipeArgs": ["-c"]
+   },
+   "sourceFileMap": {
+       "/mnt/c": "c:\\"
+   }
+}
