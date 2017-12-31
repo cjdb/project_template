@@ -1,0 +1,46 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/local/gcc-7.1/include/c++/7.1.0/",
+                "${workspaceRoot}/include"
+            ],
+            "defines": [],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "/usr/local/gcc-7.1/include/c++/7.1.0/",
+                    "${workspaceRoot}/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        },
+        {
+            "name": "WSL",
+            "intelliSenseMode": "clang-x64",
+            "includePath": [
+                "${workspaceRoot}/include",
+                "C:\\Users\\user\\AppData\\Local/lxss/rootfs/usr/local/gcc-7.1/include/c++/7.1.0",
+                "C:\\Users\\user\\AppData\\Local/lxss/rootfs/usr/local/gcc-7.1/include/c++/7.1.0/backward",
+                "C:\\Users\\user\\AppData\\Local/lxss/rootfs/usr/local/include",
+                "${workspaceRoot}/include"
+            ],
+            "defines": [
+                "__linux__",
+                "__x86_64__"
+            ],
+            "browse": {
+                "path": [
+                    "C:\\Users\\user\\AppData\\Local/lxss/rootfs/usr/local/gcc-7.1/include/c++/7.1.0",
+                    "C:\\Users\\user\\AppData\\Local/lxss/rootfs/usr/local/include",
+                    "${workspaceRoot}/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 3
+}
