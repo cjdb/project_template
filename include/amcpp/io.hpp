@@ -37,7 +37,7 @@ namespace amcpp {
    inline std::ostream& write(std::ostream& o, const std::string& s)
    {
       o.write(as_bytes(s.size()), sizeof(s.size()));
-      return o.write(s.data(), s.size());
+      return o.write(s.data(), static_cast<std::streamsize>(s.size()));
    }
 
    inline std::istream& discard_ws(std::istream& in)
@@ -53,7 +53,7 @@ namespace amcpp {
          auto size = decltype(s.size()){};
          if (in.read(as_bytes(size), sizeof(size))) {
             s = std::string(size, '\0');
-            in.read(&s[0], size);
+            in.read(&s[0], static_cast<std::streamsize>(size));
          }
       }
 
