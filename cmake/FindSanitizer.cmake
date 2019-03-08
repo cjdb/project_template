@@ -1,5 +1,6 @@
 #
 #  Copyright 2018 Morris Hafner
+#  Copyright 2019 Christopher Di Bella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,22 +27,52 @@ foreach(san ${Sanitizer_FIND_COMPONENTS})
    endif()
 
    cmake_push_check_state(RESET)
-   list(APPEND CMAKE_REQUIRED_LIBRARIES -fsanitize=${san})
-   if(san STREQUAL "cfi")
+
+   set(sanitizer_option "")
+   if(${san} MATCHES "Address")
+      set(sanitizer_option "address")
+   elseif(${san} MATCHES "Undefined")
+      set(sanitizer_option "undefined")
+   elseif(${san} MATCHES "Thread")
+      set(sanitizer_option "thread")
+   elseif(${san} MATCHES "Memory")
+      set(sanitizer_option "memory")
+      list(APPEND CMAKE_REQUIRED_FLAGS -fno-omit-frame-pointer)
+      if(${san} MATCHES "Origins")
+         list(APPEND CMAKE_REQUIRED_FLAGS -fsanitize-memory-track-origins=2)
+      endif()
+   elseif(${san} STREQUAL "ControlFlowIntegrity")
+      if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+         continue()
+      endif()
       list(APPEND CMAKE_REQUIRED_FLAGS "-fvisibility=default -flto")
+      set(sanitizer_option "cfi")
+   elseif(${san} STREQUAL "DataFlowSanitizer")
+      set(sanitizer_option "data-flow")
+   elseif(${san} STREQUAL "ShadowCallStack")
+      set(sanitizer_option "shadow-call-stack")
+   elseif(${san} STREQUAL "SafeStack")
+      set(sanitizer_option "safe-stack")
+   else()
+      message(SEND_ERROR "${san} has not been implemented in FindSanitizer.cmake.")
    endif()
-   check_cxx_compiler_flag(-fsanitize=${san} ${san}_sanitizer_supported)
+
+   list(APPEND CMAKE_REQUIRED_LIBRARIES -fsanitize=${sanitizer_option})
+
+   check_cxx_compiler_flag(-fsanitize=${sanitizer_option} ${san}_supported)
    cmake_pop_check_state()
 
-   if(${${san}_sanitizer_supported})
+   if(${${san}_supported})
       add_library(Sanitizer::${san} INTERFACE IMPORTED)
       set_target_properties(Sanitizer::${san} PROPERTIES
-                       INTERFACE_COMPILE_OPTIONS -fsanitize=${san}
-                       INTERFACE_LINK_LIBRARIES -fsanitize=${san})
+                       INTERFACE_COMPILE_OPTIONS -fsanitize=${sanitizer_option}
+                       INTERFACE_LINK_LIBRARIES -fsanitize=${sanitizer_option})
       set(Sanitizer_${san}_FOUND TRUE)
       set_property(TARGET Sanitizer::all APPEND PROPERTY
          INTERFACE_LINK_LIBRARIES Sanitizer::${san})
    endif()
+
+   unset(extraneous_flags)
 endforeach()
 
 find_package_handle_standard_args(Sanitizer

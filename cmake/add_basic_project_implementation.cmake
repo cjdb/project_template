@@ -17,7 +17,7 @@
 # \brief Provides build settings common for all targets.
 # \param target The target to apply the target to.
 #
-function(build_impl target libraries)
+function(add_impl target libraries)
    # Warnings
    target_compile_options("${target}" PRIVATE
       $<$<CXX_COMPILER_ID:MSVC>:
@@ -45,28 +45,29 @@ function(build_impl target libraries)
          /w14928 # illegal copy-initialization; more than one user-defined conversion has been implicitly applied
          >
       $<$<CXX_COMPILER_ID:GNU>:
-         -Wall -Wextra
+         -Wall
+         -Wextra
          -Wcast-align
          -Wconversion
-         -Wduplicated-cond
-         -Wduplicated-branches
          -Wdouble-promotion
-         -Wlogical-op
          -Wnon-virtual-dtor
-         -Wnull-dereference
          -Wold-style-cast
          -Woverloaded-virtual
          -Wpedantic
          -Wshadow
          -Wsign-conversion
          -Wsign-promo
-         -Wmisleading-indentation
          -Wunused
          -Wformat=2
          -Wodr
-         -Wno-attributes>
+         -Wno-attributes
+         $<$<NOT:$<VERSION_LESS:${CMAKE_CXX_COMPILER_VERSION},6>>:
+            -Wnull-dereference>
+         >
       $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
          -Weverything
+         -Wno-unused-command-line-argument
+         -Wno-missing-prototypes
          -Wno-c++98-compat
          -Wno-c++98-compat-pedantic
          -Wno-padded>)
@@ -100,7 +101,22 @@ function(build_impl target libraries)
       message(STATUS "Linking ${i} with ${target}")
       target_link_libraries("${target}" PUBLIC ${i})
    endforeach()
-   target_link_libraries("${target}" PRIVATE CodeCoverage::all)
+
+   target_link_libraries("${target}" PRIVATE
+      $<$<BOOL:${CJDB_CODE_COVERAGE}>:CodeCoverage::all>
+      $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:Sanitizer::all>
+      $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:Sanitizer::ControlFlowIntegrity>)
+
+   target_compile_options(
+      "${target}" PRIVATE
+      $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:
+         -fvisibility=default>
+      $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:
+         $<$<OR:$<BOOL:${Sanitizer_MemorySanitizer_FOUND}>,$<BOOL:${Sanitizer_MemorySanitizerWithOrigins_FOUND}>>:
+            -fno-omit-frame-pointer -fno-optimize-sibling-calls
+            $<$<BOOL:${Sanitizer_MemorySanitizerWithOrigins_FOUND}>:
+               -fsanitize-memory-track-origins=2>>>)
+
    add_compile_options(-DRANGES_DEEP_STL_INTEGRATION=1)
 endfunction()
 
@@ -118,12 +134,9 @@ function(name_target prefix file)
    set(target "${sublibrary}" PARENT_SCOPE)
 endfunction()
 
-# \brief Builds an executable.
-# \param prefix A string that prefixes the filename that will be removed from its path. Everything
-#               that prefixes the prefix will _also_ be removed.
-# \param file The name of the source file.
+# \see add_${PROJECT_NAME}_executable
 #
-function(build_executable prefix file)
+function(add_basic_project_executable prefix file)
    name_target("${prefix}" "${file}")
    add_executable("${target}" "${file}.cpp")
 
@@ -132,15 +145,12 @@ function(build_executable prefix file)
       set(libraries ${ARGV})
       list(SUBLIST libraries 2 ${ARGC} libraries)
    endif()
-   build_impl("${target}" "${libraries}")
+   add_impl("${target}" "${libraries}")
 endfunction()
 
-# \brief Builds a library.
-# \param prefix A string that prefixes the filename that will be removed from its path. Everything
-#               that prefixes the prefix will _also_ be removed.
-# \param file The name of the source file.
+# \see add_${PROJECT_NAME}_library
 #
-function(build_library prefix file)
+function(add_basic_project_library prefix file)
    name_target("${prefix}" "${file}")
    add_library("${target}" "${file}.cpp")
 
@@ -149,15 +159,12 @@ function(build_library prefix file)
       set(libraries ${ARGV})
       list(SUBLIST libraries 2 ${ARGC} libraries)
    endif()
-   build_impl("${target}" "${libraries}")
+   add_impl("${target}" "${libraries}")
 endfunction()
 
-# \brief Builds a test executable and creates a test target (for CTest).
-# \param prefix A string that prefixes the filename that will be removed from its path. Everything
-#               that prefixes the prefix will _also_ be removed.
-# \param file The name of the source file.
+# \see add_${PROJECT_NAME}_test
 #
-function(build_test prefix file)
+function(add_basic_project_test prefix file)
    name_target("${prefix}" "${file}")
    name_target("${prefix}" "${file}")
    add_executable("${target}" "${file}.cpp")
@@ -167,17 +174,14 @@ function(build_test prefix file)
       set(libraries ${ARGV})
       list(SUBLIST libraries 2 ${ARGC} libraries)
    endif()
-   build_impl("${target}" "${libraries}")
+   add_impl("${target}" "${libraries}")
 
    add_test("test.${target}" "${target}")
 endfunction()
 
-# \brief Builds a benchmark executable and creates a test target (for CTest).
-# \param prefix A string that prefixes the filename that will be removed from its path. Everything
-#               that prefixes the prefix will _also_ be removed.
-# \param file The name of the source file.
+# \see add_${PROJECT_NAME}_benchmark
 #
-function(build_benchmark prefix file)
+function(add_basic_project_benchmark prefix file)
    build_executable(${ARGV})
    name_target("${prefix}" "${file}")
    target_link_libraries("${target}" PRIVATE benchmark::benchmark)

@@ -20,13 +20,13 @@ include(CMakePushCheckState)
 add_library(CodeCoverage::all INTERFACE IMPORTED)
 set(CodeCoverage_FOUND OFF)
 
-if(TARGET CodeCoverage::${CJDB_CODE_COVERAGE} OR CJDB_CODE_COVERAGE STREQUAL "")
+if(TARGET CodeCoverage::${${PROJECT_NAME}_CODE_COVERAGE} OR ${PROJECT_NAME}_CODE_COVERAGE STREQUAL "")
    return()
 endif()
 
 cmake_push_check_state(RESET)
 
-if(CJDB_CODE_COVERAGE STREQUAL "LLVMSourceCoverage")
+if(${PROJECT_NAME}_CODE_COVERAGE STREQUAL "LLVMSourceCoverage")
    set(coverage_compile_flags "-fprofile-instr-generate;-fcoverage-mapping")
    list(APPEND CMAKE_REQUIRED_FLAGS ${coverage_compile_flags})
    check_cxx_compiler_flag(-fprofile-instr-generate profiling_coverage_supported)
@@ -34,7 +34,7 @@ if(CJDB_CODE_COVERAGE STREQUAL "LLVMSourceCoverage")
    if(${profiling_coverage_supported} AND ${mapping_coverage_supported})
       set(coverage_supported TRUE)
    endif()
-elseif(CJDB_CODE_COVERAGE STREQUAL "gcov")
+elseif(${PROJECT_NAME}_CODE_COVERAGE STREQUAL "gcov")
    set(coverage_compile_flags "--coverage")
    set(coverage_link_flags ${coverage_compile_flags})
    list(APPEND CMAKE_REQUIRED_FLAGS ${coverage_compile_flags})
@@ -44,16 +44,16 @@ endif()
 cmake_pop_check_state()
 
 if (${coverage_supported})
-   add_library(CodeCoverage::${CJDB_CODE_COVERAGE} INTERFACE IMPORTED)
+   add_library(CodeCoverage::${${PROJECT_NAME}_CODE_COVERAGE} INTERFACE IMPORTED)
    set_target_properties(
-      CodeCoverage::${CJDB_CODE_COVERAGE}
+      CodeCoverage::${${PROJECT_NAME}_CODE_COVERAGE}
       PROPERTIES
          INTERFACE_COMPILE_OPTIONS "${coverage_compile_flags}"
          INTERFACE_LINK_LIBRARIES "${coverage_link_flags}")
-   set(CodeCoverage_${CJDB_CODE_COVERAGE}_FOUND ${coverage_supported})
+   set(CodeCoverage_${${PROJECT_NAME}_CODE_COVERAGE}_FOUND ${coverage_supported})
    set(CodeCoverage_FOUND ${coverage_supported})
    set_property(TARGET CodeCoverage::all APPEND PROPERTY
-      INTERFACE_LINK_LIBRARIES CodeCoverage::${CJDB_CODE_COVERAGE})
+      INTERFACE_LINK_LIBRARIES CodeCoverage::${${PROJECT_NAME}_CODE_COVERAGE})
 endif()
 
 find_package_handle_standard_args(CodeCoverage

@@ -14,20 +14,83 @@
 # limitations under the License.
 #
 task:
+  container:
+    image: cjdb/cirrus-cpp:bionic
+    cpu: 4
+    memory: 4G
   env:
     matrix:
-      - PROFILE: gcc
-        ENABLE_CLANG_TIDY: On
-      - PROFILE: clang
-        ENABLE_CLANG_TIDY: On
+      - PROFILE: gcc-5
+        CODE_COVERAGE: gcov
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS:
+      - PROFILE: gcc-6
+        CODE_COVERAGE: gcov
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS:
+      - PROFILE: gcc-7
+        CODE_COVERAGE: gcov
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS:
+      - PROFILE: gcc-8
+        CODE_COVERAGE: gcov
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS:
+      - PROFILE: clang-4
+        CODE_COVERAGE: LLVMSourceCoverage
+      - PROFILE: clang-4-libcxx
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-4-libcxx-msan
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-5
+        CODE_COVERAGE: LLVMSourceCoverage
+      - PROFILE: clang-5-libcxx
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-5-libcxx-msan
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-6
+        CODE_COVERAGE: LLVMSourceCoverage
+      - PROFILE: clang-6-libcxx
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-6-libcxx-msan
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-7
+        CODE_COVERAGE: LLVMSourceCoverage
+      - PROFILE: clang-7-libcxx
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-7-libcxx-msan
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-8
+        CODE_COVERAGE: LLVMSourceCoverage
+      - PROFILE: clang-8-libcxx
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+      - PROFILE: clang-8-libcxx-msan
+        CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
     matrix:
       - BUILD_TYPE: Debug
-      - BUILD_TYPE: RelWithDebInfo
+        ENABLE_CLANG_TIDY: On
       - BUILD_TYPE: Release
-  container:
-    image: cjdb/default_ci:latest
-    cpu: 16
-    memory: 10G
+        ENABLE_CLANG_TIDY: On
   preconfig_script:
     - mkdir build
   conan_config_install_script:
@@ -39,10 +102,14 @@ task:
   conan_build_configure_script:
     - cd build
     - conan build .. --configure
-    - cmake .. -DCJDB_ENABLE_CLANG_TIDY=${ENABLE_CLANG_TIDY}
+    - cmake .. -Dbasic_project_ENABLE_CLANG_TIDY=${ENABLE_CLANG_TIDY}
+    - cmake .. -Dbasic_project_CODE_COVERAGE=${CODE_COVERAGE}
+    - cmake .. -Dbasic_project_REQUIRED_SANITIZERS="${REQUIRED_SANITIZERS}" -Dbasic_project_OPTIONAL_SANITIZERS="${OPTIONAL_SANITIZERS}"
   build_script:
     - cd build
-    - conan build .. --build
+    - ninja -v
   tests_script:
     - cd build
     - ctest -j 8 --output-on-failure
+  clang_format_script:
+    - bash config/hooks/clang-format.sh

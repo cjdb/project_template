@@ -14,24 +14,45 @@
 # limitations under the License.
 #
 
-# Control-flow integrity sanitisers can only be enabled when a linker supports LTO (thus some form
-# of release mode is necessary).
+# Check that AddressSanitizer doesn't clash with any of:
+#     ThreadSanitizer
+#     MemorySanitizer
+#     SafeStack
+#     ShadowCallStack
 #
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND "${CMAKE_BUILD_TYPE}" MATCHES "Rel")
-   set(CJDB_ENABLE_CFI "cfi")
-else()
-   set(CJDB_ENABLE_CFI "")
-endif()
+function(flag_incompatible_sanitizers required optional)
+   set(joined "${required}")
+   list(APPEND joined "${optional}")
+   list(FIND joined "AddressSanitizer" asan_result)
+
+   if(asan_result GREATER -1)
+      list(FIND joined "ThreadSanitizer" tsan_result)
+      if(tsan_result GREATER -1)
+         message(SEND_ERROR "Cannot enable both AddressSanitizer and ThreadSanitizer.")
+      endif()
+
+      list(FIND joined "MemorySanitizer" msan_result)
+      list(FIND joined "MemorySanitizerWithOrigins" msan_origin_result)
+      if(msan_result GREATER -1 OR msan_origin_result GREATER -1)
+         message(SEND_ERROR "Cannot enable both AddressSanitizer and MemorySanitizer.")
+      endif()
+
+      list(FIND joined "SafeStack" safe_stack_result)
+      if(safe_stack_result GREATER -1)
+         message(SEND_ERROR "Cannot enable both AddressSanitizer and SafeStack.")
+      endif()
+
+      list(FIND joined "ShadowCallStack" shadow_call_stack_result)
+      if (shadow_call_stack_result GREATER -1)
+         message(SEND_ERROR "Cannot enable both AddressSanitizer and ShadowCallStack.")
+      endif()
+   endif()
+endfunction()
+
+flag_incompatible_sanitizers(
+   "${${PROJECT_NAME}_REQUIRED_SANITIZERS}"
+   "${${PROJECT_NAME}_OPTIONAL_SANITIZERS}")
 
 find_package(Sanitizer
-   REQUIRED COMPONENTS   # Sanitisers supported by both GCC and LLVM.
-      address            # see https://clang.llvm.org/docs/AddressSanitizer.html
-      undefined          # see https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
-      thread             # see https://clang.llvm.org/docs/ThreadSanitizer.html
-      ${CJDB_ENABLE_CFI} # see https://clang.llvm.org/docs/ControlFlowIntegrity.html
-
-   OPTIONAL_COMPONENTS   # LLVM supports significantly more sanitisers than GCC.
-      dataflow           # see https://clang.llvm.org/docs/DataFlowSanitizer.html
-      shadow-call-stack  # see https://clang.llvm.org/docs/ShadowCallStack.html
-      safe-stack         # see https://clang.llvm.org/docs/SafeStack.html
-)
+   REQUIRED COMPONENTS ${${PROJECT_NAME}_REQUIRED_SANITIZERS}
+   OPTIONAL_COMPONENTS ${${PROJECT_NAME}_OPTIONAL_SANITIZERS})
