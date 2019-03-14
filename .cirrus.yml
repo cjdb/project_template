@@ -22,69 +22,93 @@ task:
     matrix:
       - PROFILE: gcc-5
         CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
-        OPTIONAL_SANITIZERS:
+        REQUIRED_SANITIZERS: Address;Undefined
+
       - PROFILE: gcc-6
         CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
-        OPTIONAL_SANITIZERS:
+        REQUIRED_SANITIZERS: Address;Undefined
+
       - PROFILE: gcc-7
         CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
-        OPTIONAL_SANITIZERS:
+        REQUIRED_SANITIZERS: Address;Undefined
+
       - PROFILE: gcc-8
         CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
-        OPTIONAL_SANITIZERS:
+        REQUIRED_SANITIZERS: Address;Undefined
+
       - PROFILE: clang-4
         CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: Address;Undefined
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-4-libcxx
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: Address;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-4-libcxx-msan
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-5
         CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: Address;Undefined
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-5-libcxx
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: Address;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-5-libcxx-msan
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-6
         CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: Address;Undefined
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-6-libcxx
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: Address;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-6-libcxx-msan
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-7
         CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: Address;Undefined
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-7-libcxx
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: Address;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-7-libcxx-msan
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-8
         CODE_COVERAGE: LLVMSourceCoverage
+        REQUIRED_SANITIZERS: Address;Undefined
+        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-8-libcxx
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: AddressSanitizer;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: Address;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+
       - PROFILE: clang-8-libcxx-msan
         CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemorySanitizerWithOrigins;UndefinedBehaviorSanitizer
+        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
     matrix:
       - BUILD_TYPE: Debug

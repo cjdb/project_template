@@ -42,15 +42,15 @@ set(${PROJECT_NAME}_IWYU_PATH "/usr/bin/iwyu" CACHE
 # Options for sanitizers
 set(valid_sanitizer_options
    ""
-   AddressSanitizer           # see https://clang.llvm.org/docs/AddressSanitizer.html
-   UndefinedBehaviorSanitizer # see https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
-   ThreadSanitizer            # see https://clang.llvm.org/docs/ThreadSanitizer.html
-   MemorySanitizer            # see https://clang.llvm.org/docs/MemorySanitizer.html
-   MemorySanitizerWithOrigins # see https://clang.llvm.org/docs/MemorySanitizer.html#origin-tracking
-   ControlFlowIntegrity       # see https://clang.llvm.org/docs/ControlFlowIntegrity.html
-   DataFlowSanitizer          # see https://clang.llvm.org/docs/DataFlowSanitizer.html
-   ShadowCallStack            # see https://clang.llvm.org/docs/ShadowCallStack.html
-   SafeStack                  # see https://clang.llvm.org/docs/SafeStack.html
+   Address              # see https://clang.llvm.org/docs/AddressSanitizer.html
+   Undefined            # see https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+   Thread               # see https://clang.llvm.org/docs/ThreadSanitizer.html
+   Memory               # see https://clang.llvm.org/docs/MemorySanitizer.html
+   MemoryWithOrigins    # see https://clang.llvm.org/docs/MemorySanitizer.html#origin-tracking
+   ControlFlowIntegrity # see https://clang.llvm.org/docs/ControlFlowIntegrity.html
+   DataFlow             # see https://clang.llvm.org/docs/DataFlowSanitizer.html
+   ShadowCallStack      # see https://clang.llvm.org/docs/ShadowCallStack.html
+   SafeStack            # see https://clang.llvm.org/docs/SafeStack.html
 )
 basic_project_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_REQUIRED_SANITIZERS
@@ -60,7 +60,7 @@ basic_project_enumerated_option(
       "ControlFlowIntegrity is not enabled in Debug mode: it is only enabled in Release modes."
    TYPE STRING LIST
    EXPECTS ${valid_sanitizer_options}
-   DEFAULT_VALUE UndefinedBehaviorSanitizer)
+   DEFAULT_VALUE Undefined)
 
 basic_project_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_OPTIONAL_SANITIZERS
@@ -70,7 +70,7 @@ basic_project_enumerated_option(
       "ControlFlowIntegrity is not enabled in Debug mode: it is only enabled in Release modes."
    TYPE STRING LIST
    EXPECTS ${valid_sanitizer_options}
-   DEFAULT_VALUE AddressSanitizer ControlFlowIntegrity)
+   DEFAULT_VALUE Address ControlFlowIntegrity)
 
 option(${PROJECT_NAME}_SANITIZE_RELEASE "Turns on sanitizers in Release modes. Defaults to OFF." OFF)
 

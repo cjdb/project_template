@@ -112,9 +112,9 @@ function(add_impl target libraries)
       $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:
          -fvisibility=default>
       $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:
-         $<$<OR:$<BOOL:${Sanitizer_MemorySanitizer_FOUND}>,$<BOOL:${Sanitizer_MemorySanitizerWithOrigins_FOUND}>>:
+         $<$<OR:$<BOOL:${Sanitizer_Memory_FOUND}>,$<BOOL:${Sanitizer_MemoryWithOrigins_FOUND}>>:
             -fno-omit-frame-pointer -fno-optimize-sibling-calls
-            $<$<BOOL:${Sanitizer_MemorySanitizerWithOrigins_FOUND}>:
+            $<$<BOOL:${Sanitizer_MemoryWithOrigins_FOUND}>:
                -fsanitize-memory-track-origins=2>>>)
 
    add_compile_options(-DRANGES_DEEP_STL_INTEGRATION=1)
