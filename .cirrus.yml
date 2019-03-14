@@ -136,9 +136,9 @@ task:
       chmod 755 /tmp/build-configure.sh
 
     - |
-      echo '#!/bin/bash'                   > /tmp/build.sh
-      echo 'cd /basic_project/build-${1}' >> /tmp/build.sh
-      echo 'ninja -v'                     >> /tmp/build.sh
+      echo '#!/bin/bash'  > /tmp/build.sh
+      echo 'build-${1}'  >> /tmp/build.sh
+      echo 'ninja -v'    >> /tmp/build.sh
       chmod 755 /tmp/build.sh
 
     - |
