@@ -16,8 +16,8 @@
 task:
   container:
     image: cjdb/cirrus-cpp:bionic
-    cpu: 4
-    memory: 4G
+    cpu: 2
+    memory: 2
   env:
     matrix:
       - PROFILE: gcc-5
@@ -110,30 +110,64 @@ task:
         CODE_COVERAGE: LLVMSourceCoverage
         REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
-    matrix:
-      - BUILD_TYPE: Debug
-        ENABLE_CLANG_TIDY: On
-      - BUILD_TYPE: Release
-        ENABLE_CLANG_TIDY: On
-  preconfig_script:
-    - mkdir build
-  conan_config_install_script:
-    - cd build
-    - conan config install ../conan
-  conan_install_script:
-    - cd build
-    - conan install .. --profile=${PROFILE} --settings build_type=${BUILD_TYPE} --build missing
-  conan_build_configure_script:
-    - cd build
-    - conan build .. --configure
-    - cmake .. -Dbasic_project_ENABLE_CLANG_TIDY=${ENABLE_CLANG_TIDY}
-    - cmake .. -Dbasic_project_CODE_COVERAGE=${CODE_COVERAGE}
-    - cmake .. -Dbasic_project_REQUIRED_SANITIZERS="${REQUIRED_SANITIZERS}" -Dbasic_project_OPTIONAL_SANITIZERS="${OPTIONAL_SANITIZERS}"
-  build_script:
-    - cd build
-    - ninja -v
-  tests_script:
-    - cd build
-    - ctest -j 8 --output-on-failure
+  generate_scripts_script:
+    - |
+      echo '#!/bin/bash'                 > /tmp/pre-install.sh
+      echo 'mkdir -p build-${1}'        >> /tmp/pre-install.sh
+      echo 'conan config install conan' >> /tmp/pre-install.sh
+      chmod 755 /tmp/pre-install.sh
+
+    - |
+      echo '#!/bin/bash'                      > /tmp/conan-install.sh
+      echo 'cd build-${1}'                   >> /tmp/conan-install.sh
+      echo 'conan install .. \'              >> /tmp/conan-install.sh
+      echo '   --profile=${PROFILE} \'       >> /tmp/conan-install.sh
+      echo '   --settings build_type=${1} \' >> /tmp/conan-install.sh
+      echo '   --build missing'              >> /tmp/conan-install.sh
+      chmod 755 /tmp/conan-install.sh
+
+    - |
+      echo '#!/bin/bash'                                                        > /tmp/build-configure.sh
+      echo 'cd build-${1}'                                                     >> /tmp/build-configure.sh
+      echo 'conan build .. --configure'                                        >> /tmp/build-configure.sh
+      echo "cmake .. -Dbasic_project_CODE_COVERAGE='${CODE_COVERAGE}' \\"      >> /tmp/build-configure.sh
+      echo "  -Dbasic_project_REQUIRED_SANITIZERS='${REQUIRED_SANITIZERS}' \\" >> /tmp/build-configure.sh
+      echo "  -Dbasic_project_OPTIONAL_SANITIZERS='${OPTIONAL_SANITIZERS}'"    >> /tmp/build-configure.sh
+      chmod 755 /tmp/build-configure.sh
+
+    - |
+      echo '#!/bin/bash'                   > /tmp/build.sh
+      echo 'cd /basic_project/build-${1}' >> /tmp/build.sh
+      echo 'ninja -v'                     >> /tmp/build.sh
+      chmod 755 /tmp/build.sh
+
+    - |
+      echo '#!/bin/bash'                     > /tmp/test.sh
+      echo 'cd build-${1}'                  >> /tmp/test.sh
+      echo 'ctest -j 8 --output-on-failure' >> /tmp/test.sh
+      chmod 755 /tmp/test.sh
+
+  pre_install_Debug_script:
+    - /tmp/pre-install.sh Debug
+  conan_install_Debug_script:
+    - /tmp/conan-install.sh Debug
+  conan_build_configure_Debug_script:
+    - /tmp/build-configure.sh Debug
+  build_Debug_script:
+    - /tmp/build.sh Debug
+  test_Debug_script:
+    - /tmp/test.sh Debug
+
+  pre_install_Release_script:
+    - /tmp/pre-install.sh Release
+  conan_install_Release_script:
+    - /tmp/conan-install.sh Release
+  conan_build_configure_Release_script:
+    - /tmp/build-configure.sh Release
+  build_Debug_script:
+    - /tmp/build.sh Release
+  test_Debug_script:
+    - /tmp/test.sh Release
+
   clang_format_script:
     - bash config/hooks/clang-format.sh
