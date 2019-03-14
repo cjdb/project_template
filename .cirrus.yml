@@ -52,6 +52,10 @@ task:
           - PROFILE: clang-6-libcxx-msan
           - PROFILE: clang-7-libcxx-msan
           - PROFILE: clang-8-libcxx-msan
+
+  clang_format_script:
+    - bash config/hooks/clang-format.sh
+
   generate_scripts_script:
     - |
       echo '#!/bin/bash'                 > /tmp/pre-install.sh
@@ -110,6 +114,3 @@ task:
     - /tmp/build.sh Release
   test_Release_script:
     - /tmp/test.sh Release
-
-  clang_format_script:
-    - bash config/hooks/clang-format.sh
