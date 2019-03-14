@@ -100,3 +100,11 @@ include(CTest)
 set(PROJECT_DIRECTORY_PREFIX "${PROJECT_NAME}")
 add_subdirectory(source)
 add_subdirectory(test)
+
+install(TARGETS "${PROJECT_NAME}" EXPORT "${PROJECT_NAME}-targets" DESTINATION lib)
+install(
+   EXPORT "${PROJECT_NAME}-targets"
+   FILE "${PROJECT_NAME}-config.cmake"
+   DESTINATION "lib/cmake/${PROJECT_NAME}")
+install(DIRECTORY "include/" DESTINATION "include" FILES_MATCHING PATTERN "*.hpp")
+export(EXPORT "${PROJECT_NAME}-targets" FILE "${PROJECT_NAME}-config.cmake")
