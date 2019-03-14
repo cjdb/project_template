@@ -1,5 +1,5 @@
 #
-#  Copyright 2018 Christopher Di Bella
+#  Copyright 2019 Christopher Di Bella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-add_subdirectory(unit)
-add_subdirectory(integration)
-add_subdirectory(regression)
+cd build-${1}                    && \
+ctest -j 8 --output-on-failure

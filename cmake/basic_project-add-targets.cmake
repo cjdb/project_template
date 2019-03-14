@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(add_basic_project_implementation)
+include(basic_project-add-targets-impl)
 
 # \brief Builds an executable.
 # \param prefix A string that prefixes the filename that will be removed from its path. Everything
 #               that prefixes the prefix will _also_ be removed.
 # \param file The name of the source file.
 #
-function(add_${PROJECT_NAME}_executable prefix file)
-   add_basic_project_executable(prefix file)
+function(add_${PROJECT_NAME}_executable)
+   add_basic_project_executable_impl(${ARGN})
 endfunction()
 
 # \brief Builds a library.
@@ -29,8 +29,8 @@ endfunction()
 #               that prefixes the prefix will _also_ be removed.
 # \param file The name of the source file.
 #
-function(add_${PROJECT_NAME}_library prefix file)
-   add_basic_project_library(prefix file)
+function(add_${PROJECT_NAME}_library)
+   add_basic_project_library_impl(${ARGN})
 endfunction()
 
 
@@ -40,15 +40,6 @@ endfunction()
 #               that prefixes the prefix will _also_ be removed.
 # \param file The name of the source file.
 #
-function(add_${PROJECT_NAME}_test prefix file)
-   add_basic_project_test(prefix file)
-endfunction()
-
-# \brief Builds a benchmark executable and creates a test target (for CTest).
-# \param prefix A string that prefixes the filename that will be removed from its path. Everything
-#               that prefixes the prefix will _also_ be removed.
-# \param file The name of the source file.
-#
-function(add_${PROJECT_NAME}_benchmark prefix file)
-   add_basic_project_benchmark(prefix file)
+function(add_${PROJECT_NAME}_test)
+   add_basic_project_test_impl(${ARGN})
 endfunction()

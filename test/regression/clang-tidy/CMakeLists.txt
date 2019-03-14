@@ -1,5 +1,5 @@
 #
-#  Copyright 2019 Christopher Di Bella
+#  Copyright 2018 Christopher Di Bella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,14 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(add_basic_project_implementation)
+include(basic_project-add-targets-impl)
 
 # Tests for checks that are disabled
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -cert-dcl21-cpp)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -cert-dcl59-cpp)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -google-build-namespaces)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -google-build-using-namespace)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -google-runtime-int)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -google-runtime-references)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -readability-named-parameter)
-add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -readability-uppercase-literal-suffix)
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -cert-dcl21-cpp.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -cert-dcl59-cpp.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -google-build-namespaces.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -google-build-using-namespace.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -google-runtime-int.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -google-runtime-references.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -readability-named-parameter.cpp)
+
+add_basic_project_test_impl(
+   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
+   FILENAME -readability-uppercase-literal-suffix.cpp)

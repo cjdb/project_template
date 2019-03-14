@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-Checks: 'bugprone-*,clang-analyzer-*,-clang-diagnostic-missing-prototypes,-cert-dcl21-cpp,-cert-dcl59-cpp,cppcoreguildelines-*,google-*,-google-build-namespaces,-google-build-using-namespace,-google-runtime-int,-google-runtime-references,misc-*,modernize-*,performance-*,portability-*,readability-*,-readability-named-parameter,-readability-uppercase-literal-suffix'
-WarningsAsErrors: 'bugprone-*,clang-analyzer-*,-clang-diagnostic-missing-prototypes,cert-*,-cert-dcl21-cpp,-cert-dcl59-cpp,cppcoreguildelines-*,google-*,-google-build-namespaces,-google-build-using-namespace,-google-runtime-int,-google-runtime-references,misc-*,modernize-*,performance-*,portability-*,readability-*,-readability-named-parameter,-readability-uppercase-literal-suffix'
+Checks: 'bugprone-*,clang-analyzer-*,-clang-diagnostic-missing-prototypes,-clang-diagnostic-unused-command-line-argument,-cert-dcl21-cpp,-cert-dcl59-cpp,cppcoreguildelines-*,google-*,-google-build-namespaces,-google-build-using-namespace,-google-runtime-int,-google-runtime-references,misc-*,modernize-*,performance-*,portability-*,readability-*,-readability-named-parameter,-readability-uppercase-literal-suffix'
+WarningsAsErrors: 'bugprone-*,clang-analyzer-*,-clang-diagnostic-missing-prototypes,-clang-diagnostic-unused-command-line-argument,cert-*,-cert-dcl21-cpp,-cert-dcl59-cpp,cppcoreguildelines-*,google-*,-google-build-namespaces,-google-build-using-namespace,-google-runtime-int,-google-runtime-references,misc-*,modernize-*,performance-*,portability-*,readability-*,-readability-named-parameter,-readability-uppercase-literal-suffix'
 
 CheckOptions:
   - key: bugprone-assert-side-effect

@@ -1,5 +1,5 @@
 #
-#  Copyright 2019 Christopher Di Bella
+#  Copyright 2018 Christopher Di Bella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,124 +16,92 @@
 task:
   container:
     image: cjdb/cirrus-cpp:bionic
-    cpu: 4
-    memory: 4G
+    cpu: 2
+    memory: 8
   env:
+    PROJECT_NAME: basic_project
     matrix:
-      - PROFILE: gcc-5
-        CODE_COVERAGE: gcov
+      - CODE_COVERAGE: gcov
         REQUIRED_SANITIZERS: Address;Undefined
+        CLANG_TIDY_PATH: /usr/bin/clang-tidy-8
+        matrix:
+          - PROFILE: gcc-5
+          - PROFILE: gcc-6
+          - PROFILE: gcc-7
+          - PROFILE: gcc-8
 
-      - PROFILE: gcc-6
-        CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: Address;Undefined
-
-      - PROFILE: gcc-7
-        CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: Address;Undefined
-
-      - PROFILE: gcc-8
-        CODE_COVERAGE: gcov
-        REQUIRED_SANITIZERS: Address;Undefined
-
-      - PROFILE: clang-4
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
+      - CODE_COVERAGE: LLVMSourceCoverage
         OPTIONAL_SANITIZERS: ControlFlowIntegrity
+        matrix:
+          - REQUIRED_SANITIZERS: Address;Undefined
+            matrix:
+              - CLANG_TIDY_PATH: /usr/bin/clang-tidy-4.0
+                matrix:
+                  - PROFILE: clang-4
+                  - PROFILE: clang-4-libcxx
+              - CLANG_TIDY_PATH: /usr/bin/clang-tidy-5.0
+                matrix:
+                  - PROFILE: clang-5
+                  - PROFILE: clang-5-libcxx
+              - CLANG_TIDY_PATH: /usr/bin/clang-tidy-6.0
+                matrix:
+                  - PROFILE: clang-6
+                  - PROFILE: clang-6-libcxx
+              - CLANG_TIDY_PATH: /usr/bin/clang-tidy-7
+                matrix:
+                  - PROFILE: clang-7
+                  - PROFILE: clang-7-libcxx
+              - CLANG_TIDY_PATH: /usr/bin/clang-tidy-8
+                matrix:
+                  - PROFILE: clang-8
+                  - PROFILE: clang-8-libcxx
 
-      - PROFILE: clang-4-libcxx
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
+          - REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
+            matrix:
+              - PROFILE: clang-4-libcxx-msan
+                CLANG_TIDY_PATH: /usr/bin/clang-tidy-4.0
+              - PROFILE: clang-5-libcxx-msan
+                CLANG_TIDY_PATH: /usr/bin/clang-tidy-5.0
+              - PROFILE: clang-6-libcxx-msan
+                CLANG_TIDY_PATH: /usr/bin/clang-tidy-6.0
+              - PROFILE: clang-7-libcxx-msan
+                CLANG_TIDY_PATH: /usr/bin/clang-tidy-7
+              - PROFILE: clang-8-libcxx-msan
+                CLANG_TIDY_PATH: /usr/bin/clang-tidy-8
 
-      - PROFILE: clang-4-libcxx-msan
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-5
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-5-libcxx
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-5-libcxx-msan
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-6
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-6-libcxx
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-6-libcxx-msan
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-7
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-7-libcxx
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-7-libcxx-msan
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-8
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-8-libcxx
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: Address;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-
-      - PROFILE: clang-8-libcxx-msan
-        CODE_COVERAGE: LLVMSourceCoverage
-        REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
-        OPTIONAL_SANITIZERS: ControlFlowIntegrity
-    matrix:
-      - BUILD_TYPE: Debug
-        ENABLE_CLANG_TIDY: On
-      - BUILD_TYPE: Release
-        ENABLE_CLANG_TIDY: On
-  preconfig_script:
-    - mkdir build
-  conan_config_install_script:
-    - cd build
-    - conan config install ../conan
-  conan_install_script:
-    - cd build
-    - conan install .. --profile=${PROFILE} --settings build_type=${BUILD_TYPE} --build missing
-  conan_build_configure_script:
-    - cd build
-    - conan build .. --configure
-    - cmake .. -Dbasic_project_ENABLE_CLANG_TIDY=${ENABLE_CLANG_TIDY}
-    - cmake .. -Dbasic_project_CODE_COVERAGE=${CODE_COVERAGE}
-    - cmake .. -Dbasic_project_REQUIRED_SANITIZERS="${REQUIRED_SANITIZERS}" -Dbasic_project_OPTIONAL_SANITIZERS="${OPTIONAL_SANITIZERS}"
-  build_script:
-    - cd build
-    - ninja -v
-  tests_script:
-    - cd build
-    - ctest -j 8 --output-on-failure
   clang_format_script:
     - bash config/hooks/clang-format.sh
+
+  pre_install_Debug_script:
+    - bash config/scripts/pre-install.sh Debug
+  conan_install_Debug_script:
+    - bash config/scripts/conan-install.sh Debug ${PROFILE}
+  conan_build_configure_Debug_script:
+    - bash config/scripts/build-configure.sh
+        "${PROJECT_NAME}"
+        "Debug"
+        "${CODE_COVERAGE}"
+        "${REQUIRED_SANITIZERS}"
+        "${OPTIONAL_SANITIZERS}"
+        "${CLANG_TIDY_PATH}"
+  build_Debug_script:
+    - bash config/scripts/build.sh Debug
+  test_Debug_script:
+    - bash config/scripts/test.sh Debug
+
+  pre_install_Release_script:
+    - bash config/scripts/pre-install.sh Release
+  conan_install_Release_script:
+    - bash config/scripts/conan-install.sh Release ${PROFILE}
+  conan_build_configure_Release_script:
+    - bash config/scripts/build-configure.sh
+        "${PROJECT_NAME}"
+        "Release"
+        "${CODE_COVERAGE}"
+        "${REQUIRED_SANITIZERS}"
+        "${OPTIONAL_SANITIZERS}"
+        "${CLANG_TIDY_PATH}"
+  build_Release_script:
+    - bash config/scripts/build.sh Release
+  test_Release_script:
+    - bash config/scripts/test.sh Release

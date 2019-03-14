@@ -21,7 +21,7 @@ format() {
       if [[ -d $i ]]; then
          format `pwd`/$i
       elif [[ ${i: -4} == ".cpp" || ${i: -4} == ".cxx" || ${i: -3} == ".cc" || ${i: -2} == ".c" || \
-              ${i: -4} == ".hpp" || ${i: -4} == ".hxx" || ${i: -3} == ".hh" || ${i: -1} == ".h" ]]
+              ${i: -4} == ".hpp" || ${i: -4} == ".hxx" || ${i: -3} == ".hh" || ${i: -2} == ".h" ]]
       then
          clang-format -i -style=file -- "$i"
       fi
@@ -44,6 +44,6 @@ if [[ -z `git status --porcelain --untracked-files=no` ]]; then
    exit 0
 else
    echo "Changes were identified after formatting: please commit these changes and re-try pushing."
-   git status
+   git status -v
    exit 1
 fi

@@ -1,5 +1,5 @@
 #
-#  Copyright 2019 Christopher Di Bella
+#  Copyright 2018 Christopher Di Bella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
+   set(optional_values "")
+   set(single_value_args TARGET)
+   set(multi_value_args PUBLIC_LINKAGE PRIVATE_LINKAGE INTERFACE_LINKAGE)
+
+   cmake_parse_arguments(
+      add_target_args
+      "${optional_values}"
+      "${single_value_args}"
+      "${multi_value_args}"
+      ${ARGN})
+endmacro()
+
+function(add_impl_linkage target linkage to_link)
+   foreach(i ${to_link})
+      message(STATUS "Linking ${i} against ${target} with ${linkage} linkage.")
+      target_link_libraries("${target}" ${linkage} ${i})
+   endforeach()
+endfunction()
 
 # \brief Provides build settings common for all targets.
 # \param target The target to apply the target to.
 #
-function(add_impl target libraries)
+function(add_impl)
+   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES(${ARGN})
+
    # Warnings
-   target_compile_options("${target}" PRIVATE
+   target_compile_options("${add_target_args_TARGET}" PRIVATE
       $<$<CXX_COMPILER_ID:MSVC>:
          /permissive-
          /analyze
@@ -72,13 +93,13 @@ function(add_impl target libraries)
          -Wno-c++98-compat-pedantic
          -Wno-padded>)
    # Warnings as errors
-   target_compile_options("${target}" PRIVATE
+   target_compile_options("${add_target_args_TARGET}" PRIVATE
       $<$<CXX_COMPILER_ID:MSVC>:
          /WX>
       $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
          -Werror>)
    # Strict C++
-   target_compile_options("${target}" PRIVATE
+   target_compile_options("${add_target_args_TARGET}" PRIVATE
       $<$<CXX_COMPILER_ID:MSVC>:
             /permissive-
       >
@@ -87,7 +108,7 @@ function(add_impl target libraries)
       >
    )
    # Compiler features
-   target_compile_options("${target}" PRIVATE
+   target_compile_options("${add_target_args_TARGET}" PRIVATE
       $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
          -fdiagnostics-color=always
          -fvisibility=default
@@ -95,20 +116,19 @@ function(add_impl target libraries)
             -fstack-protector-all>
       >)
 
-   target_include_directories("${target}" PUBLIC "${PROJECT_SOURCE_DIR}/include")
+   target_include_directories("${add_target_args_TARGET}" PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
-   foreach(i ${libraries})
-      message(STATUS "Linking ${i} with ${target}")
-      target_link_libraries("${target}" PUBLIC ${i})
-   endforeach()
+   add_impl_linkage("${add_target_args_TARGET}" PUBLIC "${add_target_args_PUBLIC_LINKAGE}")
+   add_impl_linkage("${add_target_args_TARGET}" PRIVATE "${add_target_args_PRIVATE_LINKAGE}")
+   add_impl_linkage("${add_target_args_TARGET}" INTERFACE "${add_target_args_INTERFACE_LINKAGE}")
 
-   target_link_libraries("${target}" PRIVATE
-      $<$<BOOL:${CJDB_CODE_COVERAGE}>:CodeCoverage::all>
+   target_link_libraries("${add_target_args_TARGET}" PRIVATE
+      $<$<BOOL:${${PROJECT_NAME}_CODE_COVERAGE}>:CodeCoverage::all>
       $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:Sanitizer::all>
       $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:Sanitizer::ControlFlowIntegrity>)
 
    target_compile_options(
-      "${target}" PRIVATE
+      "${add_target_args_TARGET}" PRIVATE
       $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:
          -fvisibility=default>
       $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:
@@ -126,64 +146,95 @@ endfunction()
 # \param file The name of the source file.
 # \returns A sans-prefix path that is dot separated.
 #
-function(name_target prefix file)
-   get_filename_component(sublibrary "${file}.cpp" ABSOLUTE)
-   string(REGEX REPLACE ".cpp$" "" sublibrary "${sublibrary}")
+function(name_target)
+   set(optional_values "")
+   set(single_value_args REMOVE_PREFIX FILENAME)
+   set(multi_value_args "")
+   cmake_parse_arguments(
+      name_target_args
+      "${optional_values}"
+      "${single_value_args}"
+      "${multi_value_args}"
+      ${ARGN})
+
+   get_filename_component(sublibrary "${name_target_args_FILENAME}" ABSOLUTE)
+   string(REGEX REPLACE "[.][^.]+$" "" sublibrary "${sublibrary}")
    string(REPLACE "/" "." sublibrary "${sublibrary}")
-   string(REGEX REPLACE "^.*${prefix}[.]" "" sublibrary "${sublibrary}")
+   string(REPLACE "/" "." name_target_args_REMOVE_PREFIX "${name_target_args_REMOVE_PREFIX}")
+   string(REGEX REPLACE "^.*${name_target_args_REMOVE_PREFIX}[.]" "" sublibrary "${sublibrary}")
    set(target "${sublibrary}" PARENT_SCOPE)
 endfunction()
 
+macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
+   set(optional_values "")
+   set(single_value_args REMOVE_PREFIX FILENAME)
+   set(multi_value_args PUBLIC_LINKAGE PRIVATE_LINKAGE INTERFACE_LINKAGE)
+
+   cmake_parse_arguments(
+      add_target_args
+      "${optional_values}"
+      "${single_value_args}"
+      "${multi_value_args}"
+      ${ARGN})
+
+   if(${add_target_args_FILENAME} STREQUAL "")
+      BASIC_PROJECT_MULTILINE_STRING(
+         error
+         "FILENAME is not set. Cannot build a target without a filename.")
+      message(FATAL_ERROR "${error}")
+   elseif(${add_target_args_REMOVE_PREFIX} STREQUAL "")
+      BASIC_PROJECT_MULTILINE_STRING(
+         warning
+         "REMOVE_PREFIX is not set. This is not problematic, but it means that the target"
+         "\"${add_target_args_TARGET}\" will potentially have a really, really, *really* long and"
+         "impractical name.")
+      message(WARNING "${warning}")
+   endif()
+endmacro()
+
 # \see add_${PROJECT_NAME}_executable
 #
-function(add_basic_project_executable prefix file)
-   name_target("${prefix}" "${file}")
-   add_executable("${target}" "${file}.cpp")
+function(add_basic_project_executable_impl)
+   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
-   set(libraries "")
-   if(${ARGC} GREATER 2)
-      set(libraries ${ARGV})
-      list(SUBLIST libraries 2 ${ARGC} libraries)
-   endif()
-   add_impl("${target}" "${libraries}")
+   name_target(
+      REMOVE_PREFIX "${add_target_args_REMOVE_PREFIX}"
+      FILENAME "${add_target_args_FILENAME}")
+   add_executable("${target}" "${add_target_args_FILENAME}")
+   add_impl(
+      TARGET "${target}"
+      PUBLIC_LINKAGE "${add_target_args_PUBLIC_LINKAGE}"
+      PRIVATE_LINKAGE "${add_target_args_PRIVATE_LINKAGE}"
+      INTERFACE_LINKAGE "${add_target_args_INTERFACE_LINKAGE}"
+   )
 endfunction()
 
 # \see add_${PROJECT_NAME}_library
 #
-function(add_basic_project_library prefix file)
-   name_target("${prefix}" "${file}")
-   add_library("${target}" "${file}.cpp")
+function(add_basic_project_library_impl)
+   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
-   set(libraries "")
-   if(${ARGC} GREATER 2)
-      set(libraries ${ARGV})
-      list(SUBLIST libraries 2 ${ARGC} libraries)
-   endif()
-   add_impl("${target}" "${libraries}")
+   name_target(
+      REMOVE_PREFIX "${add_target_args_REMOVE_PREFIX}"
+      FILENAME "${add_target_args_FILENAME}")
+   add_library("${target}" "${add_target_args_FILENAME}")
+   add_impl(
+      TARGET "${target}"
+      PUBLIC_LINKAGE "${add_target_args_PUBLIC_LINKAGE}"
+      PRIVATE_LINKAGE "${add_target_args_PRIVATE_LINKAGE}"
+      INTERFACE_LINKAGE "${add_target_args_INTERFACE_LINKAGE}"
+   )
 endfunction()
 
 # \see add_${PROJECT_NAME}_test
 #
-function(add_basic_project_test prefix file)
-   name_target("${prefix}" "${file}")
-   name_target("${prefix}" "${file}")
-   add_executable("${target}" "${file}.cpp")
+function(add_basic_project_test_impl)
+   add_basic_project_executable_impl(${ARGN})
 
-   set(libraries "")
-   if(${ARGC} GREATER 2)
-      set(libraries ${ARGV})
-      list(SUBLIST libraries 2 ${ARGC} libraries)
-   endif()
-   add_impl("${target}" "${libraries}")
-
+   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
+   name_target(
+      REMOVE_PREFIX "${add_target_args_REMOVE_PREFIX}"
+      FILENAME "${add_target_args_FILENAME}"
+   )
    add_test("test.${target}" "${target}")
-endfunction()
-
-# \see add_${PROJECT_NAME}_benchmark
-#
-function(add_basic_project_benchmark prefix file)
-   build_executable(${ARGV})
-   name_target("${prefix}" "${file}")
-   target_link_libraries("${target}" PRIVATE benchmark::benchmark)
-   add_test("benchmark.${target}" "${target}")
 endfunction()
