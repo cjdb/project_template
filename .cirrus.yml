@@ -164,9 +164,9 @@ task:
     - /tmp/conan-install.sh Release
   conan_build_configure_Release_script:
     - /tmp/build-configure.sh Release
-  build_Debug_script:
+  build_Release_script:
     - /tmp/build.sh Release
-  test_Debug_script:
+  test_Release_script:
     - /tmp/test.sh Release
 
   clang_format_script:
