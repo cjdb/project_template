@@ -17,7 +17,7 @@ task:
   container:
     image: cjdb/cirrus-cpp:bionic
     cpu: 2
-    memory: 2
+    memory: 4
   env:
     matrix:
       - PROFILE: gcc-5
