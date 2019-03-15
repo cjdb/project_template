@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-enable_testing()
-include(CTest)
-
-add_subdirectory(unit)
-add_subdirectory(integration)
-add_subdirectory(regression)
+install(TARGETS "${PROJECT_NAME}" EXPORT "${PROJECT_NAME}-targets" DESTINATION lib)
+install(
+   EXPORT "${PROJECT_NAME}-targets"
+   FILE "${PROJECT_NAME}-config.cmake"
+   DESTINATION "lib/cmake/${PROJECT_NAME}")
+install(DIRECTORY "include/" DESTINATION "include" FILES_MATCHING PATTERN "*.hpp")
+export(EXPORT "${PROJECT_NAME}-targets" FILE "${PROJECT_NAME}-config.cmake")

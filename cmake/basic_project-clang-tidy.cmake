@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-enable_testing()
-include(CTest)
-
-add_subdirectory(unit)
-add_subdirectory(integration)
-add_subdirectory(regression)
+if (CJDB_ENABLE_CLANG_TIDY)
+   set(CMAKE_CXX_CLANG_TIDY ${${PROJECT_NAME}_CLANG_TIDY_PATH} -p=${CMAKE_BINARY_DIR})
+endif()

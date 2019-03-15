@@ -13,7 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if (CJDB_ENABLE_CLANG_TIDY)
-   find_package(Clang REQUIRED)
-   set(CMAKE_CXX_CLANG_TIDY ${${PROJECT_NAME}_CLANG_TIDY_PATH} -p=${CMAKE_BINARY_DIR})
-endif()
+find_package(Boost REQUIRED)
+find_package(Clang REQUIRED)
+find_package(CodeCoverage REQUIRED)
+# find_package(Concepts) FEATURE: Uncomment if you want to write C++20 concepts with GCC 6-9
+# find_package(doctest REQUIRED) FIXME
+find_package(range-v3 REQUIRED)
+
+include(basic_project-sanitizers)
+include(basic_project-clang-tidy)
+include(basic_project-iwyu)

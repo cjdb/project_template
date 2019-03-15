@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(add_basic_project_implementation)
+include(basic_project-add-targets-impl)
 
 # \brief Builds an executable.
 # \param prefix A string that prefixes the filename that will be removed from its path. Everything

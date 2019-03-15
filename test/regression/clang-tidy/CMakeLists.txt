@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(add_basic_project_implementation)
+include(basic_project-add-targets-impl)
 
 # Tests for checks that are disabled
 add_basic_project_test("${PROJECT_DIRECTORY_PREFIX}" -cert-dcl21-cpp)
