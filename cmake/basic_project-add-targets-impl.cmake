@@ -42,7 +42,6 @@ function(add_impl)
    # Warnings
    target_compile_options("${add_target_args_TARGET}" PRIVATE
       $<$<CXX_COMPILER_ID:MSVC>:
-         /permissive-
          /analyze
          /W4
          /w14242 # 'identfier': conversion from 'type1' to 'type1', possible loss of data
@@ -112,6 +111,7 @@ function(add_impl)
       $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
          -fdiagnostics-color=always
          -fvisibility=default
+         -fstack-protector
          $<$<CONFIG:Debug>:
             -fstack-protector-all>
       >)
@@ -129,8 +129,6 @@ function(add_impl)
 
    target_compile_options(
       "${add_target_args_TARGET}" PRIVATE
-      $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:
-         -fvisibility=default>
       $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:
          $<$<OR:$<BOOL:${Sanitizer_Memory_FOUND}>,$<BOOL:${Sanitizer_MemoryWithOrigins_FOUND}>>:
             -fno-omit-frame-pointer -fno-optimize-sibling-calls
@@ -146,28 +144,18 @@ endfunction()
 # \param file The name of the source file.
 # \returns A sans-prefix path that is dot separated.
 #
-function(name_target)
-   set(optional_values "")
-   set(single_value_args REMOVE_PREFIX FILENAME)
-   set(multi_value_args "")
-   cmake_parse_arguments(
-      name_target_args
-      "${optional_values}"
-      "${single_value_args}"
-      "${multi_value_args}"
-      ${ARGN})
-
-   get_filename_component(sublibrary "${name_target_args_FILENAME}" ABSOLUTE)
+function(name_target filename)
+   get_filename_component(sublibrary "${filename}" ABSOLUTE)
    string(REGEX REPLACE "[.][^.]+$" "" sublibrary "${sublibrary}")
    string(REPLACE "/" "." sublibrary "${sublibrary}")
-   string(REPLACE "/" "." name_target_args_REMOVE_PREFIX "${name_target_args_REMOVE_PREFIX}")
-   string(REGEX REPLACE "^.*${name_target_args_REMOVE_PREFIX}[.]" "" sublibrary "${sublibrary}")
+   string(REPLACE "/" "." remove_prefix "${CMAKE_SOURCE_DIR}")
+   string(REGEX REPLACE "^.*${remove_prefix}[.]" "" sublibrary "${sublibrary}")
    set(target "${sublibrary}" PARENT_SCOPE)
 endfunction()
 
 macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
    set(optional_values "")
-   set(single_value_args REMOVE_PREFIX FILENAME)
+   set(single_value_args FILENAME)
    set(multi_value_args PUBLIC_LINKAGE PRIVATE_LINKAGE INTERFACE_LINKAGE)
 
    cmake_parse_arguments(
@@ -182,13 +170,6 @@ macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
          error
          "FILENAME is not set. Cannot build a target without a filename.")
       message(FATAL_ERROR "${error}")
-   elseif(${add_target_args_REMOVE_PREFIX} STREQUAL "")
-      BASIC_PROJECT_MULTILINE_STRING(
-         warning
-         "REMOVE_PREFIX is not set. This is not problematic, but it means that the target"
-         "\"${add_target_args_TARGET}\" will potentially have a really, really, *really* long and"
-         "impractical name.")
-      message(WARNING "${warning}")
    endif()
 endmacro()
 
@@ -197,9 +178,7 @@ endmacro()
 function(add_basic_project_executable_impl)
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
-   name_target(
-      REMOVE_PREFIX "${add_target_args_REMOVE_PREFIX}"
-      FILENAME "${add_target_args_FILENAME}")
+   name_target("${add_target_args_FILENAME}")
    add_executable("${target}" "${add_target_args_FILENAME}")
    add_impl(
       TARGET "${target}"
@@ -214,9 +193,7 @@ endfunction()
 function(add_basic_project_library_impl)
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
-   name_target(
-      REMOVE_PREFIX "${add_target_args_REMOVE_PREFIX}"
-      FILENAME "${add_target_args_FILENAME}")
+   name_target("${add_target_args_FILENAME}")
    add_library("${target}" "${add_target_args_FILENAME}")
    add_impl(
       TARGET "${target}"
@@ -232,9 +209,6 @@ function(add_basic_project_test_impl)
    add_basic_project_executable_impl(${ARGN})
 
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
-   name_target(
-      REMOVE_PREFIX "${add_target_args_REMOVE_PREFIX}"
-      FILENAME "${add_target_args_FILENAME}"
-   )
+   name_target("${add_target_args_FILENAME}")
    add_test("test.${target}" "${target}")
 endfunction()

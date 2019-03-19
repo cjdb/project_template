@@ -73,8 +73,6 @@ foreach(san ${Sanitizer_FIND_COMPONENTS})
       set_property(TARGET Sanitizer::all APPEND PROPERTY
          INTERFACE_LINK_LIBRARIES Sanitizer::${san})
    endif()
-
-   unset(extraneous_flags)
 endforeach()
 
 find_package_handle_standard_args(Sanitizer

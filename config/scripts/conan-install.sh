@@ -14,8 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-cd build-${1}                    && \
-conan install ..              \
-   --profile=${2}             \
-   --settings build_type=${1} \
-   --build missing
+BUILD_TYPE=${1}
+PROFILE=${2}
+CODE_COVERAGE=${3}
+REQUIRED_SANITIZERS=${4}
+OPTIONAL_SANITIZERS=${5}
+ENABLE_CLANG_TIDY=${6}
+CLANG_TIDY_PATH=${7}
+
+cd build-${BUILD_TYPE}                                               && \
+conan install ..                                                        \
+   --profile=${PROFILE}                                                 \
+   --settings build_type=${BUILD_TYPE}                                  \
+   --options basic_project:code_coverage=${CODE_COVERAGE}               \
+   --options basic_project:required_sanitizers=${REQUIRED_SANITIZERS}   \
+   --options basic_project:optional_sanitizers=${OPTIONAL_SANITIZERS}   \
+   --options basic_project:enable_clang_tidy=${ENABLE_CLANG_TIDY}       \
+   --options basic_project:clang_tidy_path=${CLANG_TIDY_PATH}           \
+   --build

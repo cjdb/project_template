@@ -17,33 +17,25 @@ include(basic_project-add-targets-impl)
 
 # Tests for checks that are disabled
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -cert-dcl21-cpp.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -cert-dcl59-cpp.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -google-build-namespaces.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -google-build-using-namespace.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -google-runtime-int.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -google-runtime-references.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -readability-named-parameter.cpp)
 
 add_basic_project_test_impl(
-   REMOVE_PREFIX "${PROJECT_DIRECTORY_PREFIX}"
    FILENAME -readability-uppercase-literal-suffix.cpp)

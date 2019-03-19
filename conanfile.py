@@ -20,34 +20,71 @@ import os
 
 class Project_name(ConanFile):
     name = "basic_project"
-    description = "A project starter for C++ projects."
+    description = "A project-starter for C++ projects."
+    author = "Christopher Di Bella"
     license = "Apache License, Version 2.0"
+    url = "https://github.com/cjdb/basic_project.git"
     version = "1.0"
-    settings = "os", "compiler", "arch", "build_type"
-    generators = "cmake", "cmake_paths", "virtualrunenv"
-    requires = "range-v3/v1.0-beta@cjdb/beta", "doctest/2.2.0@bincrafters/stable", "boost/1.69.0@conan/stable"
-    exports_sources = ".clang*", "cmake/*", "CMakeLists.txt", "include/*", "source/*", "test/*", "LICENSE.md"
-    build_policy = "missing"
-    no_copy_source = True
+    topics = ("cpp", "c++", "cmake", "conan")
+    settings = ("os", "compiler", "arch", "build_type")
+    generators = ("cmake", "cmake_paths", "virtualrunenv")
+    options = {
+        "code_coverage": ["Off", "gcov", "LLVMSourceCoverage"],
+        "required_sanitizers": "ANY",
+        "optional_sanitizers": "ANY",
+        "enable_clang_tidy": [False, True],
+        "clang_tidy_path": "ANY"
+    }
+    default_options = {
+        "code_coverage": "Off",
+        "required_sanitizers": "",
+        "optional_sanitizers": "Address;Undefined;ControlFlowIntegrity",
+        "enable_clang_tidy": True,
+        "clang_tidy_path": "/usr/bin/clang-tidy"
+    }
+    requires = ("doctest/2.2.0@bincrafters/stable",
+                "gsl_microsoft/2.0.0@bincrafters/stable",
+                "range-v3/v1.0-beta@cjdb/beta")
+    exports_sources = (".clang*", "cmake/*", "CMakeLists.txt", "include/*",
+                       "source/*", "test/*", "LICENSE.md")
+    build_policy = "always"
+    no_copy_source = False
+
+    def define_from_options(self, cmake):
+        cmake_key = "{}_{}".format(self.name, "CODE_COVERAGE")
+        cmake.definitions[cmake_key] = self.options.code_coverage
+
+        cmake_key = "{}_{}".format(self.name, "REQUIRED_SANITIZERS")
+        cmake.definitions[cmake_key] = self.options.required_sanitizers
+
+        cmake_key = "{}_{}".format(self.name, "OPTIONAL_SANITIZERS")
+        cmake.definitions[cmake_key] = self.options.optional_sanitizers
+
+        cmake_key = "{}_{}".format(self.name, "ENABLE_CLANG_TIDY")
+        cmake.definitions[cmake_key] = self.options.enable_clang_tidy
+
+        cmake_key = "{}_{}".format(self.name, "CLANG_TIDY_PATH")
+        cmake.definitions[cmake_key] = self.options.clang_tidy_path
+
+        return cmake
 
     def build(self):
         cmake = CMake(self)
 
+        cmake = self.define_from_options(cmake)
         cmake.configure()
         cmake.build()
 
         env_build = RunEnvironment(self)
         with tools.environment_append(env_build.vars):
-            if self.should_test:
-                self.run("ctest -j %s --output-on-failure" % tools.cpu_count())
+            cmake.test(output_on_failure=True)
 
     def package(self):
         cmake = CMake(self)
 
-        cmake.definitions["BUILD_TESTING"] = "OFF"
-        cmake.configure()
         cmake.install()
-        self.copy("LICENSE.md", dst="licenses", ignore_case=True, keep_path=False)
+        self.copy(
+            "LICENSE.md", dst="licenses", ignore_case=True, keep_path=False)
 
     def package_info(self):
         self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))

@@ -14,16 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-PROJECT_NAME=${1}
-BUILD_TYPE=${2}
-CODE_COVERAGE=${3}
-REQUIRED_SANITIZERS=${4}
-OPTIONAL_SANITIZERS=${5}
-CLANG_TIDY_PATH=${6}
+BUILD_TYPE=${1}
 
 cd build-${BUILD_TYPE}                                               && \
-conan build .. --configure                                           && \
-cmake .. -D${PROJECT_NAME}_CODE_COVERAGE="${CODE_COVERAGE}"       \
-   -D${PROJECT_NAME}_REQUIRED_SANITIZERS="${REQUIRED_SANITIZERS}" \
-   -D${PROJECT_NAME}_OPTIONAL_SANITIZERS="${OPTIONAL_SANITIZERS}" \
-   -D${PROJECT_NAME}_CLANG_TIDY_PATH="${CLANG_TIDY_PATH}"
+conan build .. --configure

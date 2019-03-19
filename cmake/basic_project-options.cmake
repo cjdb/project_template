@@ -15,16 +15,10 @@
 #
 
 # clang-tidy options
-option(${PROJECT_NAME}_ENABLE_CLANG_TIDY "Builds with clang-tidy, if available. Defaults to ON." ON)
+option(${PROJECT_NAME}_ENABLE_CLANG_TIDY "Builds with clang-tidy, if available. Defaults to On." On)
 
 set(${PROJECT_NAME}_CLANG_TIDY_PATH "/usr/bin/clang-tidy" CACHE
    STRING "Sets the path for clang-tidy. Defaults to \"/usr/bin/clang-tidy\".")
-
-# IWYU options
-option(${PROJECT_NAME}_ENABLE_IWYU "Builds with IWYU, if available. Defaults to ON." ON)
-
-set(${PROJECT_NAME}_IWYU_PATH "/usr/bin/iwyu" CACHE
-   STRING "Sets the path for IWYU. Defaults to \"/usr/bin/iwyu\".")
 
 # Options for sanitizers
 set(valid_sanitizer_options
@@ -60,7 +54,7 @@ basic_project_enumerated_option(
    EXPECTS ${valid_sanitizer_options}
    DEFAULT_VALUE Address Undefined ControlFlowIntegrity)
 
-option(${PROJECT_NAME}_SANITIZE_RELEASE "Turns on sanitizers in Release modes. Defaults to OFF." OFF)
+option(${PROJECT_NAME}_SANITIZE_RELEASE "Turns on sanitizers in Release modes. Defaults to Off." Off)
 
 # Coverage options
 basic_project_enumerated_option(

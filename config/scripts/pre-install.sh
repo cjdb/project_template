@@ -14,5 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-mkdir -p build-${1}                 && \
+BUILD_TYPE=${1}
+
+mkdir -p build-${BUILD_TYPE}      && \
 conan config install config/conan

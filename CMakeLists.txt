@@ -37,6 +37,5 @@ include(basic_project-packages)
 include(basic_project-add-targets)
 include(basic_project-install)
 
-set(PROJECT_DIRECTORY_PREFIX "${CMAKE_SOURCE_DIR}")
 add_subdirectory(source)
 add_subdirectory(test)

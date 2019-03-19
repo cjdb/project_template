@@ -15,8 +15,6 @@
 #
 include(FindPackageHandleStandardArgs)
 
-set(ClangTidy_FOUND Off)
-
 if((NOT ${${PROJECT_NAME}_ENABLE_CLANG_TIDY}) OR (${PROJECT_NAME}_CLANG_TIDY_PATH STREQUAL ""))
    if(NOT ${${PROJECT_NAME}_ENABLE_CLANG_TIDY})
       message(STATUS "clang-tidy disabled.")
@@ -27,9 +25,14 @@ if((NOT ${${PROJECT_NAME}_ENABLE_CLANG_TIDY}) OR (${PROJECT_NAME}_CLANG_TIDY_PAT
    return()
 endif()
 
-find_path(clang_tidy_path ${${PROJECT_NAME}_CLANG_TIDY_PATH})
-set(ClangTidy_FOUND On)
-set(CMAKE_CXX_CLANG_TIDY ${${PROJECT_NAME}_CLANG_TIDY_PATH} -p=${CMAKE_BINARY_DIR})
+if(EXISTS "${${PROJECT_NAME}_CLANG_TIDY_PATH}")
+   set(ClangTidy_FOUND On)
+   set(CMAKE_CXX_CLANG_TIDY "${${PROJECT_NAME}_CLANG_TIDY_PATH}" -p=${CMAKE_BINARY_DIR})
+   message(STATUS "Found ${${PROJECT_NAME}_CLANG_TIDY_PATH}")
+else()
+   set(ClangTidy_FOUND Off)
+   message(STATUS "${PROJECT_NAME}_CLANG_TIDY_PATH=\"${${PROJECT_NAME}_CLANG_TIDY_PATH}\" not found.")
+endif()
 
-find_package_handle_standard_args("clang-tidy (path: ${${PROJECT_NAME}_CLANG_TIDY_PATH})"
+find_package_handle_standard_args(ClangTidy
    REQUIRED_VARS ClangTidy_FOUND)

@@ -20,9 +20,11 @@ task:
     memory: 8
   env:
     PROJECT_NAME: basic_project
+    ENABLE_CLANG_TIDY: True
     matrix:
       - CODE_COVERAGE: gcov
         REQUIRED_SANITIZERS: Address;Undefined
+        OPTIONAL_SANITIZERS: ;
         CLANG_TIDY_PATH: /usr/bin/clang-tidy-8
         matrix:
           - PROFILE: gcc-5
@@ -75,15 +77,15 @@ task:
   pre_install_Debug_script:
     - bash config/scripts/pre-install.sh Debug
   conan_install_Debug_script:
-    - bash config/scripts/conan-install.sh Debug ${PROFILE}
-  conan_build_configure_Debug_script:
-    - bash config/scripts/build-configure.sh
-        "${PROJECT_NAME}"
-        "Debug"
+    - bash config/scripts/conan-install.sh Debug
+        "${PROFILE}"
         "${CODE_COVERAGE}"
         "${REQUIRED_SANITIZERS}"
         "${OPTIONAL_SANITIZERS}"
+        "${ENABLE_CLANG_TIDY}"
         "${CLANG_TIDY_PATH}"
+  conan_build_configure_Debug_script:
+    - bash config/scripts/build-configure.sh Debug
   build_Debug_script:
     - bash config/scripts/build.sh Debug
   test_Debug_script:
@@ -92,15 +94,15 @@ task:
   pre_install_Release_script:
     - bash config/scripts/pre-install.sh Release
   conan_install_Release_script:
-    - bash config/scripts/conan-install.sh Release ${PROFILE}
-  conan_build_configure_Release_script:
-    - bash config/scripts/build-configure.sh
-        "${PROJECT_NAME}"
-        "Release"
+    - bash config/scripts/conan-install.sh Release
+        "${PROFILE}"
         "${CODE_COVERAGE}"
         "${REQUIRED_SANITIZERS}"
         "${OPTIONAL_SANITIZERS}"
+        "${ENABLE_CLANG_TIDY}"
         "${CLANG_TIDY_PATH}"
+  conan_build_configure_Release_script:
+    - bash config/scripts/build-configure.sh Release
   build_Release_script:
     - bash config/scripts/build.sh Release
   test_Release_script:

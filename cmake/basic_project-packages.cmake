@@ -13,15 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-find_package(Boost REQUIRED)
+
+# System packages
 find_package(Clang REQUIRED)
-find_package(CodeCoverage REQUIRED)
-# find_package(Concepts) FEATURE: Uncomment if you want to write C++20 concepts with GCC 6-9
-# find_package(doctest REQUIRED) FIXME
-find_package(range-v3 REQUIRED)
-
-# System packages, don't disable
 find_package(ClangTidy REQUIRED)
-
+find_package(CodeCoverage REQUIRED)
 include(basic_project-sanitizers)
-include(basic_project-iwyu)
+
+# Library packages
+find_package(doctest REQUIRED)
+find_package(range-v3 REQUIRED)

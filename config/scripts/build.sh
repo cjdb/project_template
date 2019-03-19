@@ -14,5 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-cd build-${1} && \
+BUILD_TYPE=${1}
+
+cd build-${BUILD_TYPE} && \
 ninja -v

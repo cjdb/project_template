@@ -1,4 +1,3 @@
-bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-bincrafters-community https://api.bintray.com/conan/conan-community/conan 
-catchorg https://api.bintray.com/conan/catchorg/Catch2
-range-v3 https://api.bintray.com/conan/cjdb/range-v3
+public-conan https://api.bintray.com/conan/bincrafters/public-conan
+conan-community https://api.bintray.com/conan/conan-community/conan
+cjdb https://api.bintray.com/conan/cjdb/range-v3
