@@ -20,7 +20,7 @@ task:
     memory: 8
   env:
     PROJECT_NAME: basic_project
-    ENABLE_CLANG_TIDY: True
+    ENABLE_CLANG_TIDY: On
     matrix:
       - CODE_COVERAGE: gcov
         REQUIRED_SANITIZERS: Address;Undefined
@@ -74,8 +74,10 @@ task:
   clang_format_script:
     - bash config/hooks/clang-format.sh
 
-  pre_install_Debug_script:
-    - bash config/scripts/pre-install.sh Debug
+  conan_config_install_script:
+    - export CONAN_USER_HOME="${CIRRUS_WORKING_DIR}"
+    - conan config install config/conan
+
   conan_install_Debug_script:
     - bash config/scripts/conan-install.sh Debug
         "${PROFILE}"
@@ -91,8 +93,6 @@ task:
   test_Debug_script:
     - bash config/scripts/test.sh Debug
 
-  pre_install_Release_script:
-    - bash config/scripts/pre-install.sh Release
   conan_install_Release_script:
     - bash config/scripts/conan-install.sh Release
         "${PROFILE}"

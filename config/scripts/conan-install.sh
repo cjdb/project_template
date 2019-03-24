@@ -22,13 +22,16 @@ OPTIONAL_SANITIZERS=${5}
 ENABLE_CLANG_TIDY=${6}
 CLANG_TIDY_PATH=${7}
 
-cd build-${BUILD_TYPE}                                               && \
-conan install ..                                                        \
-   --profile=${PROFILE}                                                 \
-   --settings build_type=${BUILD_TYPE}                                  \
-   --options basic_project:code_coverage=${CODE_COVERAGE}               \
-   --options basic_project:required_sanitizers=${REQUIRED_SANITIZERS}   \
-   --options basic_project:optional_sanitizers=${OPTIONAL_SANITIZERS}   \
-   --options basic_project:enable_clang_tidy=${ENABLE_CLANG_TIDY}       \
-   --options basic_project:clang_tidy_path=${CLANG_TIDY_PATH}           \
-   --build
+export CONAN_USER_HOME="${CIRRUS_WORKING_DIR}"
+
+mkdir -p build-${BUILD_TYPE}                              && \
+cd build-${BUILD_TYPE}                                    && \
+conan install ..                                        \
+   --build                                              \
+   --profile=${PROFILE}                                 \
+   --settings build_type=${BUILD_TYPE}                  \
+   --options code_coverage=${CODE_COVERAGE}             \
+   --options required_sanitizers=${REQUIRED_SANITIZERS} \
+   --options optional_sanitizers=${OPTIONAL_SANITIZERS} \
+   --options enable_clang_tidy=${ENABLE_CLANG_TIDY}     \
+   --options clang_tidy_path=${CLANG_TIDY_PATH}         \

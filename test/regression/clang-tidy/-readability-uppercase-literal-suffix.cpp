@@ -17,7 +17,7 @@
 /// This test checks that readability-uppercase-literal-suffix is *disabled*.
 /// \see https://clang.llvm.org/extra/clang-tidy/checks/readability-uppercase-literal-suffix.html.
 
-int main()
+void x()
 {
    auto x = 0l;
    (void)x;

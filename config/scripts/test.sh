@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 BUILD_TYPE=${1}
+export CONAN_USER_HOME="${CIRRUS_WORKING_DIR}"
 
 cd build-${BUILD_TYPE} && \
 conan build .. --test

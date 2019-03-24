@@ -17,6 +17,6 @@
 /// This test checks that google-build-namespaces is *disabled*.
 /// \see https://clang.llvm.org/extra/clang-tidy/checks/google-build-namespaces.html.
 
-#include "google-build-namespaces.hpp"
+#include <google-build-namespaces.hpp>
 
 int main() { return ::foo(); }

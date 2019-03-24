@@ -22,4 +22,6 @@ include(basic_project-sanitizers)
 
 # Library packages
 find_package(doctest REQUIRED)
+
 find_package(range-v3 REQUIRED)
+add_compile_options(-DRANGES_DEEP_STL_INTEGRATION=1)

@@ -13,10 +13,112 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+function(add_impl_linkage target scope to_link)
+   if(to_link)
+      message(STATUS "Linking `${to_link}` with ${scope} scope, against ${target}.")
+      target_link_libraries("${target}" ${scope} "${to_link}")
+   endif()
+endfunction()
+
+function(add_impl_prefix_include target scope to_include)
+   if(to_include)
+      message(STATUS
+         "Prefixing `${to_include}` to include directories, with ${scope} scope, when compiling ${target}.")
+      target_include_directories("${target}" ${scope} "${to_include}")
+   endif()
+endfunction()
+
+function(add_impl_suffix_include target scope to_include)
+   if(to_include)
+      message(STATUS
+         "Suffixing `${to_include}` to include directories, with ${scope} scope, when compiling ${target}.")
+      target_include_directories("${target}" ${scope} "${to_include}")
+   endif()
+endfunction()
+
+function(add_impl_prefix_options target scope to_prefix)
+   if(to_prefix)
+      message(STATUS
+         "Prefixing compiler option(s) `${to_prefix}` with ${scope} scope, when compiling ${target}.")
+      target_compile_options("${target}" BEFORE ${scope} "${to_prefix}")
+   endif()
+endfunction()
+
+function(add_impl_suffix_options target scope to_suffix)
+   if(to_suffix)
+      message(STATUS
+         "Suffixing compiler option(s) `${to_suffix}` with ${scope} scope, when compiling ${target}.")
+      target_compile_options("${target}" ${scope} "${to_suffix}")
+   endif()
+endfunction()
+
+function(add_impl_enable_features target scope to_enable)
+   if(to_enable)
+      message(STATUS
+         "Enabling compiler feature(s) `${to_enable}` with ${scope} scope, when compiling ${target}.")
+      target_compile_features("${target}" ${scope} "${to_enable}")
+   endif()
+endfunction()
+
+function(add_impl_define_macros target scope to_define)
+   if(to_define)
+      message(STATUS
+         "Defining macro(s) `${to_define}` with ${scope} scope, when compiling ${target}")
+      target_compile_definitions("${target}" ${scope} "${to_define}")
+   endif()
+endfunction()
+
+function(add_impl_custom_target_settings)
+   set(optional_values "")
+   set(single_value_args TARGET SCOPE)
+   set(multi_value_args LINK SUFFIX_INCLUDE SUFFIX_OPTIONS ENABLE_FEATURE DEFINITIONS)
+   cmake_parse_arguments(
+      settings
+      "${optional_values}"
+      "${single_value_args}"
+      "${multi_value_args}"
+      ${ARGN})
+
+   add_impl_suffix_include("${settings_TARGET}" "${settings_SCOPE}" "${settings_SUFFIX_INCLUDE}")
+   add_impl_suffix_options("${settings_TARGET}" "${settings_SCOPE}" "${settings_SUFFIX_OPTIONS}")
+   add_impl_enable_features("${settings_TARGET}" "${settings_SCOPE}" "${settings_ENABLE_FEATURES}")
+   add_impl_define_macros("${settings_TARGET}" "${settings_SCOPE}" "${settings_DEFINITIONS}")
+   add_impl_linkage("${settings_TARGET}" "${settings_SCOPE}" "${settings_LINK}")
+endfunction()
+
 macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
    set(optional_values "")
    set(single_value_args TARGET)
-   set(multi_value_args PUBLIC_LINKAGE PRIVATE_LINKAGE INTERFACE_LINKAGE)
+   set(multi_value_args
+
+   PREFIX_INCLUDE
+   INTERFACE_PREFIX_INCLUDE
+   PUBLIC_PREFIX_INCLUDE
+
+      INCLUDE
+      INTERFACE_INCLUDE
+      PUBLIC_INCLUDE
+
+      LINKAGE
+      INTERFACE_LINKAGE
+      PUBLIC_LINKAGE
+
+      PREFIX_COMPILER_OPTIONS
+      INTERFACE_PREFIX_COMPILER_OPTIONS
+      PUBLIC_PREFIX_COMPILER_OPTIONS
+
+      COMPILER_OPTIONS
+      INTERFACE_COMPILER_OPTIONS
+      PUBLIC_COMPILER_OPTIONS
+
+      COMPILER_FEATURES
+      INTERFACE_COMPILER_FEATURES
+      PUBLIC_COMPILER_FEATURES
+
+      COMPILER_DEFINITIONS
+      INTERFACE_COMPILER_DEFINITIONS
+      PUBLIC_COMPILER_DEFINITIONS)
 
    cmake_parse_arguments(
       add_target_args
@@ -26,18 +128,37 @@ macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
       ${ARGN})
 endmacro()
 
-function(add_impl_linkage target linkage to_link)
-   foreach(i ${to_link})
-      message(STATUS "Linking ${i} against ${target} with ${linkage} linkage.")
-      target_link_libraries("${target}" ${linkage} ${i})
-   endforeach()
-endfunction()
-
 # \brief Provides build settings common for all targets.
 # \param target The target to apply the target to.
 #
 function(add_impl)
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES(${ARGN})
+
+   add_impl_prefix_include(
+      "${add_target_args_TARGET}"
+      PUBLIC
+      "${add_target_args_PUBLIC_PREFIX_INCLUDE}")
+   add_impl_prefix_include(
+      "${add_target_args_TARGET}"
+      PRIVATE
+      "${add_target_args_PREFIX_INCLUDE}")
+   add_impl_prefix_include(
+      "${add_target_args_TARGET}"
+      INTERFACE
+      "${add_target_args_INTERFACE_PREFIX_INCLUDE}")
+
+   add_impl_prefix_options(
+      "${add_target_args_TARGET}"
+      PUBLIC
+      "${add_target_args_PUBLIC_PREFIX_COMPILER_OPTIONS}")
+   add_impl_prefix_options(
+      "${add_target_args_TARGET}"
+      PRIVATE
+      "${add_target_args_PREFIX_COMPILER_OPTIONS}")
+   add_impl_prefix_options(
+      "${add_target_args_TARGET}"
+      INTERFACE
+      "${add_target_args_INTERFACE_PREFIX_COMPILER_OPTIONS}")
 
    # Warnings
    target_compile_options("${add_target_args_TARGET}" PRIVATE
@@ -118,10 +239,6 @@ function(add_impl)
 
    target_include_directories("${add_target_args_TARGET}" PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
-   add_impl_linkage("${add_target_args_TARGET}" PUBLIC "${add_target_args_PUBLIC_LINKAGE}")
-   add_impl_linkage("${add_target_args_TARGET}" PRIVATE "${add_target_args_PRIVATE_LINKAGE}")
-   add_impl_linkage("${add_target_args_TARGET}" INTERFACE "${add_target_args_INTERFACE_LINKAGE}")
-
    target_link_libraries("${add_target_args_TARGET}" PRIVATE
       $<$<BOOL:${${PROJECT_NAME}_CODE_COVERAGE}>:CodeCoverage::all>
       $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:Sanitizer::all>
@@ -135,7 +252,30 @@ function(add_impl)
             $<$<BOOL:${Sanitizer_MemoryWithOrigins_FOUND}>:
                -fsanitize-memory-track-origins=2>>>)
 
-   add_compile_options(-DRANGES_DEEP_STL_INTEGRATION=1)
+   add_impl_custom_target_settings(
+      TARGET         "${add_target_args_TARGET}"
+      SCOPE PUBLIC
+      SUFFIX_INCLUDE "${add_target_args_PUBLIC_INCLUDE}"
+      SUFFIX_OPTIONS "${add_target_args_PUBLIC_COMPILER_OPTIONS}"
+      ENABLE_FEATURE "${add_target_args_PUBLIC_COMPILER_FEATURES}"
+      DEFINITIONS    "${add_target_args_PUBLIC_COMPILER_DEFINITIONS}"
+      LINK           "${add_target_args_PUBLIC_LINKAGE}")
+   add_impl_custom_target_settings(
+      TARGET         "${add_target_args_TARGET}"
+      SCOPE PRIVATE
+      SUFFIX_INCLUDE "${add_target_args_INCLUDE}"
+      SUFFIX_OPTIONS "${add_target_args_COMPILER_OPTIONS}"
+      ENABLE_FEATURE "${add_target_args_COMPILER_FEATURES}"
+      DEFINITIONS    "${add_target_args_COMPILER_DEFINITIONS}"
+      LINK           "${add_target_args_LINKAGE}")
+   add_impl_custom_target_settings(
+      TARGET         "${add_target_args_TARGET}"
+      SCOPE INTERFACE
+      SUFFIX_INCLUDE "${add_target_args_INTERFACE_INCLUDE}"
+      SUFFIX_OPTIONS "${add_target_args_INTERFACE_COMPILER_OPTIONS}"
+      ENABLE_FEATURE "${add_target_args_INTERFACE_COMPILER_FEATURES}"
+      DEFINITIONS    "${add_target_args_INTERFACE_COMPILER_DEFINITIONS}"
+      LINK           "${add_target_args_INTERFACE_LINKAGE}")
 endfunction()
 
 # \brief Produces a target name for compiling a translation unit.
@@ -155,8 +295,36 @@ endfunction()
 
 macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
    set(optional_values "")
-   set(single_value_args FILENAME)
-   set(multi_value_args PUBLIC_LINKAGE PRIVATE_LINKAGE INTERFACE_LINKAGE)
+   set(single_value_args FILENAME LIBRARY_TYPE)
+   set(multi_value_args
+
+      PUBLIC_PREFIX_INCLUDE
+      PREFIX_INCLUDE
+      INTERFACE_PREFIX_INCLUDE
+
+      PUBLIC_INCLUDE
+      INCLUDE
+      INTERFACE_INCLUDE
+
+      PUBLIC_LINKAGE
+      LINKAGE
+      INTERFACE_LINKAGE
+
+      PUBLIC_PREFIX_COMPILER_OPTIONS
+      PREFIX_COMPILER_OPTIONS
+      INTERFACE_PREFIX_COMPILER_OPTIONS
+
+      PUBLIC_COMPILER_OPTIONS
+      COMPILER_OPTIONS
+      INTERFACE_COMPILER_OPTIONS
+
+      PUBLIC_COMPILER_FEATURES
+      COMPILER_FEATURES
+      INTERFACE_COMPILER_FEATURES
+
+      PUBLIC_COMPILER_DEFINITIONS
+      COMPILER_DEFINITIONS
+      INTERFACE_COMPILER_DEFINITIONS)
 
    cmake_parse_arguments(
       add_target_args
@@ -173,6 +341,40 @@ macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
    endif()
 endmacro()
 
+macro(BASIC_PROJECT_CALL_ADD_IMPL)
+   add_impl(
+      TARGET "${target}"
+
+      PREFIX_INCLUDE "${add_target_args_PREFIX_INCLUDE}"
+      INTERFACE_PREFIX_INCLUDE "${add_target_args_INTERFACE_PREFIX_INCLUDE}"
+      PUBLIC_PREFIX_INCLUDE "${add_target_args_PUBLIC_PREFIX_INCLUDE}"
+
+      INCLUDE "${add_target_args_INCLUDE}"
+      INTERFACE_INCLUDE "${add_target_args_INTERFACE_INCLUDE}"
+      PUBLIC_INCLUDE "${add_target_args_PUBLIC_INCLUDE}"
+
+      LINKAGE "${add_target_args_LINKAGE}"
+      INTERFACE_LINKAGE "${add_target_args_INTERFACE_LINKAGE}"
+      PUBLIC_LINKAGE "${add_target_args_PUBLIC_LINKAGE}"
+
+      PREFIX_COMPILER_OPTIONS "${add_target_args_PREFIX_COMPILER_OPTIONS}"
+      INTERFACE_PREFIX_COMPILER_OPTIONS "${add_target_args_INTERFACE_PREFIX_COMPILER_OPTIONS}"
+      PUBLIC_PREFIX_COMPILER_OPTIONS "${add_target_args_PUBLIC_PREFIX_COMPILER_OPTIONS}"
+
+      COMPILER_OPTIONS "${add_target_args_COMPILER_OPTIONS}"
+      INTERFACE_COMPILER_OPTIONS "${add_target_args_INTERFACE_COMPILER_OPTIONS}"
+      PUBLIC_COMPILER_OPTIONS "${add_target_args_PUBLIC_COMPILER_OPTIONS}"
+
+      COMPILER_FEATURES "${add_target_args_COMPILER_FEATURES}"
+      INTERFACE_COMPILER_FEATURES "${add_target_args_INTERFACE_COMPILER_FEATURES}"
+      PUBLIC_COMPILER_FEATURES "${add_target_args_PUBLIC_COMPILER_FEATURES}"
+
+      COMPILER_DEFINITIONS "${add_target_args_COMPILER_DEFINITIONS}"
+      INTERFACE_COMPILER_DEFINITIONS "${add_target_args_INTERFACE_COMPILER_DEFINITIONS}"
+      PUBLIC_COMPILER_DEFINITIONS "${add_target_args_PUBLIC_COMPILER_DEFINITIONS}"
+   )
+endmacro()
+
 # \see add_${PROJECT_NAME}_executable
 #
 function(add_basic_project_executable_impl)
@@ -180,12 +382,7 @@ function(add_basic_project_executable_impl)
 
    name_target("${add_target_args_FILENAME}")
    add_executable("${target}" "${add_target_args_FILENAME}")
-   add_impl(
-      TARGET "${target}"
-      PUBLIC_LINKAGE "${add_target_args_PUBLIC_LINKAGE}"
-      PRIVATE_LINKAGE "${add_target_args_PRIVATE_LINKAGE}"
-      INTERFACE_LINKAGE "${add_target_args_INTERFACE_LINKAGE}"
-   )
+   BASIC_PROJECT_CALL_ADD_IMPL()
 endfunction()
 
 # \see add_${PROJECT_NAME}_library
@@ -194,13 +391,15 @@ function(add_basic_project_library_impl)
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
    name_target("${add_target_args_FILENAME}")
-   add_library("${target}" "${add_target_args_FILENAME}")
-   add_impl(
-      TARGET "${target}"
-      PUBLIC_LINKAGE "${add_target_args_PUBLIC_LINKAGE}"
-      PRIVATE_LINKAGE "${add_target_args_PRIVATE_LINKAGE}"
-      INTERFACE_LINKAGE "${add_target_args_INTERFACE_LINKAGE}"
-   )
+
+   set(legal_library_types "" STATIC SHARED MODULE OBJECT)
+   list(FIND legal_library_types "${add_target_args_LIBRARY_TYPE}" library_type_result)
+   if(${library_type_result} EQUAL -1)
+      message(FATAL_ERROR "Cannot add a library of type \"${add_target_args_LIBRARY_TYPE}\"")
+   endif()
+
+   add_library("${target}" ${add_target_args_LIBRARY_TYPE} "${add_target_args_FILENAME}")
+   BASIC_PROJECT_CALL_ADD_IMPL()
 endfunction()
 
 # \see add_${PROJECT_NAME}_test

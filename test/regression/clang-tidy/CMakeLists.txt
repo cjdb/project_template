@@ -16,26 +16,26 @@
 include(basic_project-add-targets-impl)
 
 # Tests for checks that are disabled
-add_basic_project_test_impl(
-   FILENAME -cert-dcl21-cpp.cpp)
+add_basic_project_test_impl(FILENAME -cert-dcl21-cpp.cpp)
 
 add_basic_project_test_impl(
-   FILENAME -cert-dcl59-cpp.cpp)
+   FILENAME -cert-dcl59-cpp.cpp
+   PREFIX_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_basic_project_test_impl(
-   FILENAME -google-build-namespaces.cpp)
+   FILENAME -google-build-namespaces.cpp
+   INCLUDE ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_basic_project_test_impl(FILENAME -google-build-using-namespace.cpp)
+
+add_basic_project_test_impl(FILENAME -google-runtime-int.cpp)
+
+add_basic_project_test_impl(FILENAME -google-runtime-references.cpp)
 
 add_basic_project_test_impl(
-   FILENAME -google-build-using-namespace.cpp)
+   FILENAME -readability-named-parameter.cpp
+   LINKAGE test.regression.clang-tidy.-readability-uppercase-literal-suffix)
 
-add_basic_project_test_impl(
-   FILENAME -google-runtime-int.cpp)
-
-add_basic_project_test_impl(
-   FILENAME -google-runtime-references.cpp)
-
-add_basic_project_test_impl(
-   FILENAME -readability-named-parameter.cpp)
-
-add_basic_project_test_impl(
-   FILENAME -readability-uppercase-literal-suffix.cpp)
+add_basic_project_library_impl(
+   FILENAME -readability-uppercase-literal-suffix.cpp
+   LIBRARY_TYPE STATIC)

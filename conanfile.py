@@ -32,14 +32,14 @@ class Project_name(ConanFile):
         "code_coverage": ["Off", "gcov", "LLVMSourceCoverage"],
         "required_sanitizers": "ANY",
         "optional_sanitizers": "ANY",
-        "enable_clang_tidy": [False, True],
+        "enable_clang_tidy": ["Off", "On"],
         "clang_tidy_path": "ANY"
     }
     default_options = {
         "code_coverage": "Off",
         "required_sanitizers": "",
         "optional_sanitizers": "Address;Undefined;ControlFlowIntegrity",
-        "enable_clang_tidy": True,
+        "enable_clang_tidy": "On",
         "clang_tidy_path": "/usr/bin/clang-tidy"
     }
     requires = ("doctest/2.2.0@bincrafters/stable",

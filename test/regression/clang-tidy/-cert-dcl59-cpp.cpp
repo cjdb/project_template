@@ -17,6 +17,6 @@
 /// This test checks that cert-dcl59-cpp is *disabled*.
 /// \see https://clang.llvm.org/extra/clang-tidy/checks/cert-dcl59-cpp.html.
 
-#include "google-build-namespaces.hpp"
+#include <google-build-namespaces.hpp>
 
 int main() { return ::foo(); }
