@@ -18,7 +18,7 @@
 find_package(Clang REQUIRED)
 find_package(ClangTidy REQUIRED)
 find_package(CodeCoverage REQUIRED)
-include(basic_project-sanitizers)
+include(project_template-sanitizers)
 
 # Library packages
 find_package(doctest REQUIRED)

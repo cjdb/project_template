@@ -2,7 +2,7 @@
 
 ## Overview
 
-There are three main functions for using `basic_project` to generate a build system. Those include:
+There are three main functions for using `project_template` to generate a build system. Those include:
    * `add_${PROJECT_NAME}_executable`
    * `add_${PROJECT_NAME}_library`
    * `add_${PROJECT_NAME}_test`
@@ -156,7 +156,7 @@ unique, the path root is cropped from `${CMAKE_SOURCE_DIR}`, which means that if
 
 ## Default include directory
 
-By default, `basic_project` includes only the top-level directory `include/` and any include
+By default, `project_template` includes only the top-level directory `include/` and any include
 directories indicated by CMake's `find_package`.
 
 ## Build options
@@ -261,11 +261,11 @@ for all three compilers.
 
 #### Buffer overflow protection
 
-`basic_project` offers support for [buffer overflow protection][wiki-buffer-overflow-protection].
-[Microsoft enable this in their compiler by default][msvc-GS], so `basic_project` only concerns
+`project_template` offers support for [buffer overflow protection][wiki-buffer-overflow-protection].
+[Microsoft enable this in their compiler by default][msvc-GS], so `project_template` only concerns
 itself with enabling buffer overflow protection for GCC and Clang.
 
-By default, `basic_project` enables `-fstack-protector` for all builds, and `-fstack-protector-all`
+By default, `project_template` enables `-fstack-protector` for all builds, and `-fstack-protector-all`
 for debug builds.
 
 If you are unsure about when to enable or disable buffer overflow protection, consider reading this
@@ -276,27 +276,27 @@ If you are unsure about when to enable or disable buffer overflow protection, co
 `add_sunshine_tracker_X` builds with all sanitsers specified by
 `SUNSHINE_TRACKER_REQUIRED_SANITIZERS` and `SUNSHINE_TRACKER_OPTIONAL_SANITIZERS`.
 
-The [`basic_project` sanitisers documentation][basic-project-sanitizers] covers this in more detail.
+The [`project_template` sanitisers documentation][project-template-sanitizers] covers this in more detail.
 
 #### Code coverage
 
 If code coverage is enabled by the user, then the [documented code coverage
-flags][basic-project-code-coverage] will be added to the mix.
+flags][project-template-code-coverage] will be added to the mix.
 
 ### Visibility support
 
-`basic_project` has both GCC and Clang compile using `-fvisibility=default` by default. GNU
+`project_template` has both GCC and Clang compile using `-fvisibility=default` by default. GNU
 articulates why [visibility support is important][gcc-visibility-support]. LLVM also discusses
 [visibility options][llvm-visibility].
 
 ### Macros
 
-As `basic_project` ships with `range-v3/v1.0-beta`, targets are compiled as if
+As `project_template` ships with `range-v3/v1.0-beta`, targets are compiled as if
 `#define RANGES_DEEP_STL_INTEGRATION 1` is present in the code. As this is a package-dependent
-definition, it is defined in `cmake/basic_project-packages.cmake`.
+definition, it is defined in `cmake/project_template-packages.cmake`.
 
-[basic-project-code-coverage]: https://www.cjdb.com.au/404.html
-[basic-project-sanitizers]: https://www.cjdb.com.au/404.html
+[project-template-code-coverage]: https://www.cjdb.com.au/404.html
+[project-template-sanitizers]: https://www.cjdb.com.au/404.html
 
 [cmake-add-library-normal-libraries]: https://cmake.org/cmake/help/latest/command/add_library.html#normal-libraries
 [cmake-add-library-object-libraries]: https://cmake.org/cmake/help/latest/command/add_library.html#object-libraries

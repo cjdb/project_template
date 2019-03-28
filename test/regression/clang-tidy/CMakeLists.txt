@@ -13,29 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(basic_project-add-targets-impl)
+include(project_template-add-targets-impl)
 
 # Tests for checks that are disabled
-add_basic_project_test_impl(FILENAME -cert-dcl21-cpp.cpp)
+add_project_template_test_impl(FILENAME -cert-dcl21-cpp.cpp)
 
-add_basic_project_test_impl(
+add_project_template_test_impl(
    FILENAME -cert-dcl59-cpp.cpp
    PREFIX_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_basic_project_test_impl(
+add_project_template_test_impl(
    FILENAME -google-build-namespaces.cpp
    INCLUDE ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_basic_project_test_impl(FILENAME -google-build-using-namespace.cpp)
+add_project_template_test_impl(FILENAME -google-build-using-namespace.cpp)
 
-add_basic_project_test_impl(FILENAME -google-runtime-int.cpp)
+add_project_template_test_impl(FILENAME -google-runtime-int.cpp)
 
-add_basic_project_test_impl(FILENAME -google-runtime-references.cpp)
+add_project_template_test_impl(FILENAME -google-runtime-references.cpp)
 
-add_basic_project_test_impl(
+add_project_template_test_impl(
    FILENAME -readability-named-parameter.cpp
    LINKAGE test.regression.clang-tidy.-readability-uppercase-literal-suffix)
 
-add_basic_project_library_impl(
+add_project_template_library_impl(
    FILENAME -readability-uppercase-literal-suffix.cpp
    LIBRARY_TYPE STATIC)

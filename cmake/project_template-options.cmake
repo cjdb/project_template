@@ -34,7 +34,7 @@ set(valid_sanitizer_options
    ShadowCallStack      # see https://clang.llvm.org/docs/ShadowCallStack.html
    SafeStack            # see https://clang.llvm.org/docs/SafeStack.html
 )
-basic_project_enumerated_option(
+project_template_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_REQUIRED_SANITIZERS
    DESCRIPTION
       "Enables a list of sanitizers in Debug mode."
@@ -44,7 +44,7 @@ basic_project_enumerated_option(
    EXPECTS ${valid_sanitizer_options}
    DEFAULT_VALUE "")
 
-basic_project_enumerated_option(
+project_template_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_OPTIONAL_SANITIZERS
    DESCRIPTION
       "Enables a list of sanitizers in Debug mode."
@@ -57,7 +57,7 @@ basic_project_enumerated_option(
 option(${PROJECT_NAME}_SANITIZE_RELEASE "Turns on sanitizers in Release modes. Defaults to Off." Off)
 
 # Coverage options
-basic_project_enumerated_option(
+project_template_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_CODE_COVERAGE
    DESCRIPTION "Enables/disables code coverage. Options are Off, GCov, and LLVMSourceCoverage."
    TYPE STRING LIST

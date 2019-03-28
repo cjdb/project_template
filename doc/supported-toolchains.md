@@ -1,6 +1,6 @@
 # Supported toolchains
 
-`basic_project` supports many toolchains. This page goes lists all of the supported toolchains and
+`project_template` supports many toolchains. This page goes lists all of the supported toolchains and
 their periphery at a high level. More details can be found on individual pages.
 
 1. [Package manager][toc-pacman]
@@ -22,12 +22,12 @@ their periphery at a high level. More details can be found on individual pages.
 
 # Package manager
 
-`basic_project` uses [Conan][conan-intro] as its [package manager][wiki-pacman]. Conan provides
+`project_template` uses [Conan][conan-intro] as its [package manager][wiki-pacman]. Conan provides
 documentation on [how it can be installed][conan-install].
 
 # Build system
 
-`basic_project` uses [CMake][cmake-intro] version at least 3.13 as a [build system][wiki-build-system]
+`project_template` uses [CMake][cmake-intro] version at least 3.13 as a [build system][wiki-build-system]
 generator. Kitware publish the [latest release][cmake-install] of CMake on their website for
 downloading, or you can install the latest version of CMake using Python's package manager, pip:
 
@@ -140,11 +140,11 @@ they support.
 </table>
 
 Information on how to customise these default profiles (e.g. to support libc++ linking against
-libstdc++-6) can be found on the [customising conan profiles page][basic-project-conan-profiles].
+libstdc++-6) can be found on the [customising conan profiles page][project-template-conan-profiles].
 
 ## MSVC
 
-`basic_project` theoretically supports [MSVC] 2017 and MSVC 2019. No testing has been made present.
+`project_template` theoretically supports [MSVC] 2017 and MSVC 2019. No testing has been made present.
 There is currently a heavy bias toward tools that target GCC and LLVM toolchains. This will
 eventually change.
 
@@ -157,49 +157,49 @@ No testing has been made present, and testing this is a lower priority than test
 
 ## clang-cl
 
-`basic_project` intends to eventually offer support for [clang-cl][llvm-clang-cl]. Integrating
+`project_template` intends to eventually offer support for [clang-cl][llvm-clang-cl]. Integrating
 support is an even lower priority than testing MSYS2 at present.
 
 # Linkers
 
-`basic_project` turns on [link-time optimisation][llvm-lto] when compiling in release modes by
+`project_template` turns on [link-time optimisation][llvm-lto] when compiling in release modes by
 default. As a result, your toolchain must support LTO in some fashion. When using a Unix-based
 system, both [LLD][llvm-lld] and recent versions of [gold][wiki-gold] support LTO. Both supported
 versions of MSVC also support LTO.
 
 # Code coverage
 
-`basic_project` supports three forms of code coverage:
+`project_template` supports three forms of code coverage:
 
 * [GNU gcov][gnu-gcov] (GCC and LLVM)
 * [LLVM SanitizerCoverage][sanitizer-coverage] (LLVM only)
 * [LLVM source-based code coverage][llvm-source-based-code-coverage] (LLVM only)
 
-The [`basic_project` options page][basic-project-options] details how to enable and disable code
+The [`project_template` options page][project-template-options] details how to enable and disable code
 coverage.
 
 # Compile-time analysis
 
 ## Static analysis
 
-`basic_project` does not yet offer support for deep static analysis.
+`project_template` does not yet offer support for deep static analysis.
 
 ## Linting
 
 ### clang-tidy
 
-`basic_project` integrates [clang-tidy][llvm-clang-tidy] into the build process. When you compile
+`project_template` integrates [clang-tidy][llvm-clang-tidy] into the build process. When you compile
 your program, clang-tidy is run. If any problems are identified, then the build will fail.
 
-The [`basic_project` options page][basic-project-options] details how to enable and disable
+The [`project_template` options page][project-template-options] details how to enable and disable
 clang-tidy.
 
-The [clang-tidy checks page][basic-project-clang-tidy] documents all of the checks that are enabled
+The [clang-tidy checks page][project-template-clang-tidy] documents all of the checks that are enabled
 by default.
 
 # Run-time analysis
 
-Assuming that you have the required libraries installed, `basic_project` supports many LLVM
+Assuming that you have the required libraries installed, `project_template` supports many LLVM
 sanitisers, including:
 
 * [AddressSanitizer][sanitizer-address]
@@ -214,50 +214,50 @@ sanitisers, including:
 * [ShadowCallStack][sanitizer-shadow-call-stack]
 
 To enable an effective subset of sanitisers, please read the [working with
-sanitisers][basic-project-sanitisers] page.
+sanitisers][project-template-sanitisers] page.
 
 # Code formatting
 
-`basic_project` provides a `.clang-format` file that can immediately be used with
+`project_template` provides a `.clang-format` file that can immediately be used with
 [clang-format][llvm-clang-format] 8 and later. There is also a pre-push [Git hook][git-hook] that
 can prevent pushing to a remote unless the code is formatted according to the prescribed style.
 
-The [clang-format configfuration page][basic-project-clang-format] goes into detail about the
+The [clang-format configfuration page][project-template-clang-format] goes into detail about the
 default rules, and which rules require specific versions of LLVM.
 
 # Continuous integration
 
-`basic_project` uses [Cirrus CI][cirrus-intro] for [continuous integration][wiki-continuous-integration].
-Of all of the configurable components of `basic_project`, the continuous integration component is
+`project_template` uses [Cirrus CI][cirrus-intro] for [continuous integration][wiki-continuous-integration].
+Of all of the configurable components of `project_template`, the continuous integration component is
 probably both the most important one for you to configure, and also the one that needs the most
 changing. It is very unlikely that the current, example configuration is a configuration that suits
 your needs.
 
-Please read the [configuring `basic_project` continuous integration page][basic-project-configure-ci]
+Please read the [configuring `project_template` continuous integration page][project-template-configure-ci]
 for details on how to do this.
 
 ## Docker images
 
 Cirrus CI relies upon [Docker][docker-intro] images for Linux and Windows testing. As such,
-`basic_project` ships with its own Docker images, which have broad support for all of the
+`project_template` ships with its own Docker images, which have broad support for all of the
 aforementioned tools.
 
-`basic_project` currently only supports Linux Docker images: this is expected to change in the
+`project_template` currently only supports Linux Docker images: this is expected to change in the
 immediate future, as lacking Windows Docker images is _the_ blocker for confirming that MSVC and
 MSYS2 support is functional, and for adding extended support for Windows development.
 
 # Default third-party libraries
 
 By default, the Conan configuration file will pull and install range-v3, Boost, and doctest. More
-information on how to configure this can be found [here][basic-project-conanfile].
+information on how to configure this can be found [here][project-template-conanfile].
 
-[basic-project-clang-format]:   https://www.cjdb.com.au/404.html
-[basic-project-clang-tidy]:     https://www.cjdb.com.au/404.html
-[basic-project-conanfile]:      https://www.cjdb.com.au/404.html
-[basic-project-conan-profiles]: https://www.cjdb.com.au/404.html
-[basic-project-configure-ci]:   https://github.com/cjdb/basic_project/wiki/Configuring-Continuous-Integration
-[basic-project-options]:        https://github.com/cjdb/basic_project/wiki/CMake-Options
-[basic-project-sanitisers]:     https://www.cjdb.com.au/404.html
+[project-template-clang-format]:   https://www.cjdb.com.au/404.html
+[project-template-clang-tidy]:     https://www.cjdb.com.au/404.html
+[project-template-conanfile]:      https://www.cjdb.com.au/404.html
+[project-template-conan-profiles]: https://www.cjdb.com.au/404.html
+[project-template-configure-ci]:   https://github.com/cjdb/project_template/wiki/Configuring-Continuous-Integration
+[project-template-options]:        https://github.com/cjdb/project_template/wiki/CMake-Options
+[project-template-sanitisers]:     https://www.cjdb.com.au/404.html
 
 [cirrus-intro]: https://cirrus-ci.org/
 
@@ -295,23 +295,23 @@ information on how to configure this can be found [here][basic-project-conanfile
 [sanitizer-thread]:           https://clang.llvm.org/docs/ThreadSanitizer.html
 [sanitizer-undefined]:        https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 
-[toc-pacman]:                https://github.com/cjdb/basic_project/wiki/Supported-toolchains#package-manager
-[toc-build-system]:          https://github.com/cjdb/basic_project/wiki/Supported-toolchains#build-system
-[toc-compilers]:             https://github.com/cjdb/basic_project/wiki/Supported-toolchains#compilers-and-standard-libraries
-[toc-msvc]:                  https://github.com/cjdb/basic_project/wiki/Supported-toolchains#msvc
-[toc-msys2]:                 https://github.com/cjdb/basic_project/wiki/Supported-toolchains#msys2
-[toc-clang-cl]:              https://github.com/cjdb/basic_project/wiki/Supported-toolchains#clang-cl
-[toc-linkers]:               https://github.com/cjdb/basic_project/wiki/Supported-toolchains#linkers
-[toc-code-coverage]:         https://github.com/cjdb/basic_project/wiki/Supported-toolchains#code-coverage
-[toc-compile-time-analysis]: https://github.com/cjdb/basic_project/wiki/Supported-toolchains#compile-time-analysis
-[toc-static-analysis]:       https://github.com/cjdb/basic_project/wiki/Supported-toolchains#static-analysis
-[toc-linting]:               https://github.com/cjdb/basic_project/wiki/Supported-toolchains#linting
-[toc-clang-tidy]:            https://github.com/cjdb/basic_project/wiki/Supported-toolchains#clang-tidy
-[toc-run-time-analysis]:     https://github.com/cjdb/basic_project/wiki/Supported-toolchains#run-time-analysis
-[toc-code-formatting]:       https://github.com/cjdb/basic_project/wiki/Supported-toolchains#code-formatting
-[toc-continuous-integration]:https://github.com/cjdb/basic_project/wiki/Supported-toolchains#continuous-integration
-[toc-docker-images]:         https://github.com/cjdb/basic_project/wiki/Supported-toolchains#docker-images
-[toc-third-party-libraries]: https://github.com/cjdb/basic_project/wiki/Supported-toolchains#default-third-party-libraries
+[toc-pacman]:                https://github.com/cjdb/project_template/wiki/Supported-toolchains#package-manager
+[toc-build-system]:          https://github.com/cjdb/project_template/wiki/Supported-toolchains#build-system
+[toc-compilers]:             https://github.com/cjdb/project_template/wiki/Supported-toolchains#compilers-and-standard-libraries
+[toc-msvc]:                  https://github.com/cjdb/project_template/wiki/Supported-toolchains#msvc
+[toc-msys2]:                 https://github.com/cjdb/project_template/wiki/Supported-toolchains#msys2
+[toc-clang-cl]:              https://github.com/cjdb/project_template/wiki/Supported-toolchains#clang-cl
+[toc-linkers]:               https://github.com/cjdb/project_template/wiki/Supported-toolchains#linkers
+[toc-code-coverage]:         https://github.com/cjdb/project_template/wiki/Supported-toolchains#code-coverage
+[toc-compile-time-analysis]: https://github.com/cjdb/project_template/wiki/Supported-toolchains#compile-time-analysis
+[toc-static-analysis]:       https://github.com/cjdb/project_template/wiki/Supported-toolchains#static-analysis
+[toc-linting]:               https://github.com/cjdb/project_template/wiki/Supported-toolchains#linting
+[toc-clang-tidy]:            https://github.com/cjdb/project_template/wiki/Supported-toolchains#clang-tidy
+[toc-run-time-analysis]:     https://github.com/cjdb/project_template/wiki/Supported-toolchains#run-time-analysis
+[toc-code-formatting]:       https://github.com/cjdb/project_template/wiki/Supported-toolchains#code-formatting
+[toc-continuous-integration]:https://github.com/cjdb/project_template/wiki/Supported-toolchains#continuous-integration
+[toc-docker-images]:         https://github.com/cjdb/project_template/wiki/Supported-toolchains#docker-images
+[toc-third-party-libraries]: https://github.com/cjdb/project_template/wiki/Supported-toolchains#default-third-party-libraries
 
 [wiki-build-system]:          https://en.wikipedia.org/wiki/Build_automation
 [wiki-continuous-integration]:https://en.wikipedia.org/wiki/Continuous_integration

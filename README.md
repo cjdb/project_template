@@ -1,11 +1,11 @@
-# basic_project
+# project_template
 
-Welcome to `basic_project`!
+Welcome to `project_template`!
 This is a quick way for you to set up a project using Conan, CMake, clang-tidy, and continuous
 integration, complete with a tutorial.
 
-Please see the [project wiki][basic-project-wiki] for documentation.
+Please see the [project wiki][project-template-wiki] for documentation.
 
 
 
-[basic-project-wiki]: https://github.com/cjdb/basic_project/wiki
+[project-template-wiki]: https://github.com/cjdb/project_template/wiki

@@ -3,7 +3,7 @@
 # Pre-requisite reading
 
 Before reading this page, you should probably read how to [configure the build system
-generator][basic-project-configure-cmake].
+generator][project-template-configure-cmake].
 
 # Setting up Cirrus CI on GitHub
 
@@ -33,7 +33,7 @@ The example continuous integration script is written to support Linux through th
 `cjdb/cirrus-cpp:bionic` Docker image. That image supports all of the non-Windows toolchains that
 are listed in the supported toolchains list.
 
-The default `basic_project` configuration file uses four CPUs and 8 GB memory on this platform.
+The default `project_template` configuration file uses four CPUs and 8 GB memory on this platform.
 
 ## Jobs
 
@@ -50,7 +50,7 @@ in the default configuration, you may like to add it. More on that is below.
 ## Scripts
 
 Due to the fact that the Debug and Release builds needed to be streamlined, and because it can be
-convenient to run something that resembles continuous integration locally, `basic_project` ships
+convenient to run something that resembles continuous integration locally, `project_template` ships
 with scripts that automate the entire build process, from start to finish. These scripts can be
 found in the top-level path `config/scripts`.
 
@@ -237,7 +237,7 @@ Runs the project tests. Takes the build type as a parameter.
 > config/scripts/test.sh ${BUILD_TYPE}
 ```
 
-[basic-project-configure-cmake]: https://github.com/cjdb/basic_project/wiki/CMake-Options
+[project-template-configure-cmake]: https://github.com/cjdb/project_template/wiki/CMake-Options
 [cirrus-docs]: https://cirrus-ci.org/
 [github-apps-personal]: https://help.github.com/en/articles/installing-an-app-in-your-personal-account
 [github-apps-org]: https://help.github.com/en/articles/installing-an-app-in-your-organization

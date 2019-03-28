@@ -15,7 +15,7 @@
 #
 cmake_minimum_required(VERSION 3.13)
 
-project("basic_project" CXX)
+project("project_template" CXX)
 add_library(${PROJECT_NAME} INTERFACE)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,11 +31,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 enable_testing()
 include(CTest)
 
-include(basic_project-utility)
-include(basic_project-options)
-include(basic_project-packages)
-include(basic_project-add-targets)
-include(basic_project-install)
+include(project_template-utility)
+include(project_template-options)
+include(project_template-packages)
+include(project_template-add-targets)
+include(project_template-install)
 
 add_subdirectory(source)
 add_subdirectory(test)

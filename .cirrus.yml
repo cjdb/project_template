@@ -19,7 +19,7 @@ task:
     cpu: 2
     memory: 8
   env:
-    PROJECT_NAME: basic_project
+    PROJECT_NAME: project_template
     ENABLE_CLANG_TIDY: On
     matrix:
       - CODE_COVERAGE: gcov

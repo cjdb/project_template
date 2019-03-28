@@ -1,11 +1,11 @@
 # Third-party libraries (WIP)
 
-An important part of `basic_project` is to offer support for easily adding third-party libraries to
+An important part of `project_template` is to offer support for easily adding third-party libraries to
 your project.
 
 # Default third-party libraries
 
-By default, `basic_project` supports:
+By default, `project_template` supports:
 
 * [doctest][github-doctest] (v2.2.0)
 * [Guideline Support Library][github-gsl]
@@ -17,7 +17,7 @@ Adding new libraries to your project is a short process.
 
 1. Find your package. Many packages can be found in the [Bintray Conan Centre][bintray-conan].
 2. If it isn't already present, add the package's remote to
-   [`config/conan/remotes.txt`][basic-project-remotes] in the project.
+   [`config/conan/remotes.txt`][project-template-remotes] in the project.
    1. You will need to provide a remote name and the remote's URL.
    2. On Bintray, you can get this by pressing the package's _Set Me Up!_ button.
 3. Add the package's reference to the list of packages assigned to the `requires` member.
@@ -27,7 +27,7 @@ Adding new libraries to your project is a short process.
    1. If you do not have a `.conan` directory in your home directory (user directory on Windows),
       you'll also need to provide the flag `--conan-root=/path/to/.conan`.
 6. Add `find_package(<output-from-find_cmake_package_name.py> REQUIRED)` to
-   [`cmake/basic-project-packages.cmake`][basic-project-packages].
+   [`cmake/project-template-packages.cmake`][project-template-packages].
 
 ## Example
 
@@ -50,14 +50,14 @@ your continuous integration's round-trip time.
 
 To remove a package, you can follow this process.
 
-1. Remove the call to `find_package(package` from `cmake/basic-project-packages.cmake`.
+1. Remove the call to `find_package(package` from `cmake/project-template-packages.cmake`.
 2. Optionally run `conan remove <package-reference>`.
 3. Optionally run `conan remote remove <remote-name>`.
 4. Remove the package reference from the list of packages assigned to the `requires` member.
 5. Remove `<remote-name>` from `config/conan/remotes.txt`.
 
-[basic-project-packages]: https://github.com/cjdb/basic_project/blob/master/cmake/packages/basic-project-packages.cmake
-[basic-project-remotes]: https://github.com/cjdb/basic_project/blob/master/config/conan/remotes.txt
+[project-template-packages]: https://github.com/cjdb/project_template/blob/master/cmake/packages/project-template-packages.cmake
+[project-template-remotes]: https://github.com/cjdb/project_template/blob/master/config/conan/remotes.txt
 
 [bintray-conan]: https://bintray.com/conan/conan-center
 [bintray-ctre]: https://bintray.com/hanickadot/ctre/CTRE%3Actre

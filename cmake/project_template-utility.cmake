@@ -23,7 +23,7 @@ endmacro()
 
 # Sanity checks a user option.
 #
-function(basic_project_enumerated_option)
+function(project_template_enumerated_option)
    set(optional_values LIST)
    set(single_value_args OPTION_NAME TYPE)
    set(multi_value_args DEFAULT_VALUE DESCRIPTION EXPECTS)

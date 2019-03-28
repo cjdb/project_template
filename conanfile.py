@@ -19,11 +19,11 @@ import os
 
 
 class Project_name(ConanFile):
-    name = "basic_project"
+    name = "project_template"
     description = "A project-starter for C++ projects."
     author = "Christopher Di Bella"
     license = "Apache License, Version 2.0"
-    url = "https://github.com/cjdb/basic_project.git"
+    url = "https://github.com/cjdb/project_template.git"
     version = "1.0"
     topics = ("cpp", "c++", "cmake", "conan")
     settings = ("os", "compiler", "arch", "build_type")

@@ -4,7 +4,7 @@ This project is structured so that you can immediately start using it as the bas
 with incredibly minor changes (if any).
 
 ```
-basic_project
+project_template
 ├── .git
 ├── .github
 |   └── ISSUE_TEMPLATE

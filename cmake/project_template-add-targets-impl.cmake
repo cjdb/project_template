@@ -377,7 +377,7 @@ endmacro()
 
 # \see add_${PROJECT_NAME}_executable
 #
-function(add_basic_project_executable_impl)
+function(add_project_template_executable_impl)
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
    name_target("${add_target_args_FILENAME}")
@@ -387,7 +387,7 @@ endfunction()
 
 # \see add_${PROJECT_NAME}_library
 #
-function(add_basic_project_library_impl)
+function(add_project_template_library_impl)
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
    name_target("${add_target_args_FILENAME}")
@@ -404,8 +404,8 @@ endfunction()
 
 # \see add_${PROJECT_NAME}_test
 #
-function(add_basic_project_test_impl)
-   add_basic_project_executable_impl(${ARGN})
+function(add_project_template_test_impl)
+   add_project_template_executable_impl(${ARGN})
 
    BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
    name_target("${add_target_args_FILENAME}")

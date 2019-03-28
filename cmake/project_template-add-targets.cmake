@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(basic_project-add-targets-impl)
+include(project_template-add-targets-impl)
 
 # \brief Builds an executable.
 # \param prefix A string that prefixes the filename that will be removed from its path. Everything
@@ -21,7 +21,7 @@ include(basic_project-add-targets-impl)
 # \param file The name of the source file.
 #
 function(add_${PROJECT_NAME}_executable)
-   add_basic_project_executable_impl(${ARGN})
+   add_project_template_executable_impl(${ARGN})
 endfunction()
 
 # \brief Builds a library.
@@ -30,7 +30,7 @@ endfunction()
 # \param file The name of the source file.
 #
 function(add_${PROJECT_NAME}_library)
-   add_basic_project_library_impl(${ARGN})
+   add_project_template_library_impl(${ARGN})
 endfunction()
 
 
@@ -41,5 +41,5 @@ endfunction()
 # \param file The name of the source file.
 #
 function(add_${PROJECT_NAME}_test)
-   add_basic_project_test_impl(${ARGN})
+   add_project_template_test_impl(${ARGN})
 endfunction()

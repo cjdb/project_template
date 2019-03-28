@@ -1,61 +1,61 @@
 # CMake options
 
-`basic_project` supports a handful of out-of-the-box options for configuring your project. These
-options can be found in `cmake/basic_project-options.cmake`.
+`project_template` supports a handful of out-of-the-box options for configuring your project. These
+options can be found in `cmake/project_template-options.cmake`.
 
 # Changing the project name
 
-**`basic_project` uses `${PROJECT_NAME}_` to prefix all of its command-line options. This page will
-use the term `basic_project` as a substitute for _your_ project's name in every command-line option.
-Unless your project is also called `basic_project`, you should change this to the name of your
+**`project_template` uses `${PROJECT_NAME}_` to prefix all of its command-line options. This page will
+use the term `project_template` as a substitute for _your_ project's name in every command-line option.
+Unless your project is also called `project_template`, you should change this to the name of your
 project.**
 
 Since CMake can't magically know the name of your project, it requires a bit of input from you. In
 the top-level `CMakeLists.txt` file, you'll see a line reading:
 
 ```cmake
-project("basic_project" CXX)
+project("project_template" CXX)
 ```
 
-Change `basic_project` to the name of your project. If your project's name has spaces in it, replace
+Change `project_template` to the name of your project. If your project's name has spaces in it, replace
 the spaces with either dashes (`-`) or underscores (`_`).
 
 # Options for clang-tidy
 
-clang-tidy is enabled by default, but its usage can be toggled using `basic_project_ENABLE_CLANG_TIDY`.
+clang-tidy is enabled by default, but its usage can be toggled using `project_template_ENABLE_CLANG_TIDY`.
 For example, if you wanted to turn clang-tidy off (not recommended), you'd run:
 
 ```bash
-cmake path/to/basic_project -Dbasic_project_ENABLE_CLANG_TIDY=Off
+cmake path/to/project_template -Dproject_template_ENABLE_CLANG_TIDY=Off
 ```
 
-`basic_project` assumes, by default, that your instance of clang-tidy is installed as
+`project_template` assumes, by default, that your instance of clang-tidy is installed as
 `/usr/bin/clang-tidy`. If you want to use a specific version of clang-tidy, your clang-tidy is
 installed in a different path, or you're not running on a Unix-compatible filesystem (e.g. Windows),
-you'll want to change this using `basic_project_CLANG_TIDY_PATH`:
+you'll want to change this using `project_template_CLANG_TIDY_PATH`:
 
 ```bash
-cmake path/to/basic_project -Dbasic_project_CLANG_TIDY_PATH=path/to/clang-tidy
+cmake path/to/project_template -Dproject_template_CLANG_TIDY_PATH=path/to/clang-tidy
 ```
 
 # Sanitisers
 
-`basic_project` offers two modes for enabling sanitisers: required and optional.
+`project_template` offers two modes for enabling sanitisers: required and optional.
 
 * A _required sanitiser_ is one that must be available to the compiler. If it is not available, then
   CMake will not generate a build system for you. Because MSVC doesn't support sanitisers, no
-  sanitisers are required by default. To customise this, you can set the `basic_project_REQUIRED_SANITIZERS`
+  sanitisers are required by default. To customise this, you can set the `project_template_REQUIRED_SANITIZERS`
   option.
 * An _optional sanitiser_ does not need to be available to the compiler. If the compiler can use it,
   then it is enabled; if it isn't available, then it simply won't be enabled. You will receive
   output letting you know that it hasn't been enabled. AddressSanitizer, UndefinedBehaviorSanitizer,
   and ControlFlowIntegrity are the default optional sanitisers. Custom optional sanitiation is
-  controlled using `basic_project_OPTIONAL_SANITIZERS`.
+  controlled using `project_template_OPTIONAL_SANITIZERS`.
 
 There are certain restrictions when using sanitisers: not all sanitisers are compatible. As a
-result, `basic_project` will check that you haven't simultaneously listed any incompatible
-sanitisers. **This means that you should always set both `basic_project_REQUIRED_SANITIZERS` and
-`basic_project_OPTIONAL_SANITIZERS` together.**
+result, `project_template` will check that you haven't simultaneously listed any incompatible
+sanitisers. **This means that you should always set both `project_template_REQUIRED_SANITIZERS` and
+`project_template_OPTIONAL_SANITIZERS` together.**
 
 ## Sanitiser options
 
@@ -78,9 +78,9 @@ In a project that requires AddressSanitizer and UndefinedBehaviorSanitizer, and 
 ControlFlowIntegrity, you would run the CMake configuration as if by:
 
 ```bash
-cmake path/to/basic_project                                \
-   -Dbasic_project_REQUIRED_SANITIZERS='Address;Undefined' \
-   -Dbasic_project_OPTIONAL_SANITIZERS='ControlFlowIntegrity'
+cmake path/to/project_template                                \
+   -Dproject_template_REQUIRED_SANITIZERS='Address;Undefined' \
+   -Dproject_template_OPTIONAL_SANITIZERS='ControlFlowIntegrity'
 ```
 
 ## Incompatible sanitisers
@@ -216,14 +216,14 @@ indicates 'not yet tested'. This table uses `Memory` to indicate both the `Memor
 As an example, the following configuration will fail, and you won't get a build system:
 
 ```bash
-cmake path/to/basic_project                      \
-   -Dbasic_project_REQUIRED_SANITIZERS='Address' \
-   -Dbasic_project_OPTIONAL_SANITIZERS='Memory'
+cmake path/to/project_template                      \
+   -Dproject_template_REQUIRED_SANITIZERS='Address' \
+   -Dproject_template_OPTIONAL_SANITIZERS='Memory'
 ```
 
 # Code coverage
 
-Code coverage is supported using `basic_project_CODE_COVERAGE`. It is not enabled by default, as
+Code coverage is supported using `project_template_CODE_COVERAGE`. It is not enabled by default, as
 there is no option that is supported by all the toolchains. The available options include:
 
 * `Off` (All)
@@ -234,8 +234,8 @@ there is no option that is supported by all the toolchains. The available option
 # Adding your own options
 
 You might want to add your own options for your own project. For Boolean options, you can use the
-CMake [`option` declarator][cmake-option]. `basic_project` also provides a function called
-`basic_project_enumerated_option` (don't rename this one!) that lets you specify your own options
+CMake [`option` declarator][cmake-option]. `project_template` also provides a function called
+`project_template_enumerated_option` (don't rename this one!) that lets you specify your own options
 when you'd like there to be more than just two valid inputs.
 
 
@@ -243,7 +243,7 @@ For example, if we wanted to set an option that took the version of LLVM that we
 against, we might do it like so:
 
 ```cmake
-basic_project_enumerated_option(
+project_template_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_LLVM_VERSION
    DESCRIPTION "Sets the version of LLVM to build against."
    TYPE STRING
@@ -252,7 +252,7 @@ basic_project_enumerated_option(
 )
 ```
 
-Here, we've created an option called `basic_project_LLVM_VERSION` (`basic_project` here is derived
+Here, we've created an option called `project_template_LLVM_VERSION` (`project_template` here is derived
 from the CMake variable `${PROJECT_NAME}`), which accepts the strings `"4"`, `"5"`, `"6"`, `"7"`,
 and `"8"`. If the user doesn't specify a value, then it defaults to `"8"`.
 
@@ -261,7 +261,7 @@ fail if a user doesn't provide a version of LLVM (perhaps they aren't building w
 then we can alter the above so that an empty string is also a valid option:
 
 ```cmake
-basic_project_enumerated_option(
+project_template_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_LLVM_VERSION
    DESCRIPTION "Sets the version of LLVM to build against."
    TYPE STRING
@@ -276,7 +276,7 @@ build system. In this case, we'd need to let users provide a semicolon-separated
 can achive this using:
 
 ```cmake
-basic_project_enumerated_option(
+project_template_enumerated_option(
    OPTION_NAME ${PROJECT_NAME}_LLVM_VERSION
    DESCRIPTION "Sets the version of LLVM to build against."
    TYPE STRING LIST
