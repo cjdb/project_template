@@ -32,6 +32,7 @@ class Project_name(ConanFile):
         "code_coverage": ["Off", "gcov", "LLVMSourceCoverage"],
         "required_sanitizers": "ANY",
         "optional_sanitizers": "ANY",
+        "sanitize_release": ["Off", "On"],
         "enable_clang_tidy": ["Off", "On"],
         "clang_tidy_path": "ANY"
     }
@@ -39,6 +40,7 @@ class Project_name(ConanFile):
         "code_coverage": "Off",
         "required_sanitizers": "",
         "optional_sanitizers": "Address;Undefined;ControlFlowIntegrity",
+        "sanitize_release": "Off",
         "enable_clang_tidy": "On",
         "clang_tidy_path": "/usr/bin/clang-tidy"
     }
@@ -51,21 +53,12 @@ class Project_name(ConanFile):
     no_copy_source = False
 
     def define_from_options(self, cmake):
-        cmake_key = "{}_{}".format(self.name, "CODE_COVERAGE")
-        cmake.definitions[cmake_key] = self.options.code_coverage
-
-        cmake_key = "{}_{}".format(self.name, "REQUIRED_SANITIZERS")
-        cmake.definitions[cmake_key] = self.options.required_sanitizers
-
-        cmake_key = "{}_{}".format(self.name, "OPTIONAL_SANITIZERS")
-        cmake.definitions[cmake_key] = self.options.optional_sanitizers
-
-        cmake_key = "{}_{}".format(self.name, "ENABLE_CLANG_TIDY")
-        cmake.definitions[cmake_key] = self.options.enable_clang_tidy
-
-        cmake_key = "{}_{}".format(self.name, "CLANG_TIDY_PATH")
-        cmake.definitions[cmake_key] = self.options.clang_tidy_path
-
+        cmake.definitions[f"{self.name}_CODE_COVERAGE"] = self.options.code_coverage
+        cmake.definitions[f"{self.name}_REQUIRED_SANITIZERS"] = self.options.required_sanitizers
+        cmake.definitions[f"{self.name}_OPTIONAL_SANITIZERS"] = self.options.optional_sanitizers
+        cmake.definitions[f"{self.name}_SANITIZE_RELEASE"] = self.options.sanitize_release
+        cmake.definitions[f"{self.name}_ENABLE_CLANG_TIDY"] = self.options.enable_clang_tidy
+        cmake.definitions[f"{self.name}_CLANG_TIDY_PATH"] = self.options.clang_tidy_path
         return cmake
 
     def build(self):

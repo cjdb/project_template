@@ -21,6 +21,7 @@ task:
   env:
     PROJECT_NAME: project_template
     ENABLE_CLANG_TIDY: On
+    SANITIZE_RELEASE: Off
     matrix:
       - CODE_COVERAGE: gcov
         REQUIRED_SANITIZERS: Address;Undefined
@@ -59,6 +60,7 @@ task:
                   - PROFILE: clang-8-libcxx
 
           - REQUIRED_SANITIZERS: MemoryWithOrigins;Undefined
+            SANITIZE_RELEASE: On
             matrix:
               - PROFILE: clang-4-libcxx-msan
                 CLANG_TIDY_PATH: /usr/bin/clang-tidy-4.0
@@ -84,6 +86,7 @@ task:
         "${CODE_COVERAGE}"
         "${REQUIRED_SANITIZERS}"
         "${OPTIONAL_SANITIZERS}"
+        "${SANITIZE_RELEASE}"
         "${ENABLE_CLANG_TIDY}"
         "${CLANG_TIDY_PATH}"
   conan_build_configure_Debug_script:
@@ -99,6 +102,7 @@ task:
         "${CODE_COVERAGE}"
         "${REQUIRED_SANITIZERS}"
         "${OPTIONAL_SANITIZERS}"
+        "${SANITIZE_RELEASE}"
         "${ENABLE_CLANG_TIDY}"
         "${CLANG_TIDY_PATH}"
   conan_build_configure_Release_script:

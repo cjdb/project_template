@@ -12,6 +12,6 @@ build_type=Release
 [env]
 CC=/usr/bin/clang-7
 CXX=/usr/bin/clang++-7
-CXXFLAGS=-fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer -stdlib=libc++ -nostdinc++ -cxx-isystem /opt/llvm-7.0-msan/include/c++/v1
+CXXFLAGS=-stdlib=libc++ -nostdinc++ -cxx-isystem /opt/llvm-7.0-msan/include/c++/v1
 LDFLAGS=-fuse-ld=lld -L /opt/llvm-7.0-msan/lib/ -Wl,-rpath,/opt/llvm-7.0-msan/lib/ -lc++abi
 CONAN_CMAKE_GENERATOR=Ninja

@@ -19,8 +19,9 @@ PROFILE=${2}
 CODE_COVERAGE=${3}
 REQUIRED_SANITIZERS=${4}
 OPTIONAL_SANITIZERS=${5}
-ENABLE_CLANG_TIDY=${6}
-CLANG_TIDY_PATH=${7}
+SANITIZE_RELEASE=${6}
+ENABLE_CLANG_TIDY=${7}
+CLANG_TIDY_PATH=${8}
 
 export CONAN_USER_HOME="${CIRRUS_WORKING_DIR}"
 
@@ -33,5 +34,6 @@ conan install ..                                        \
    --options code_coverage=${CODE_COVERAGE}             \
    --options required_sanitizers=${REQUIRED_SANITIZERS} \
    --options optional_sanitizers=${OPTIONAL_SANITIZERS} \
+   --options sanitize_release=${SANITIZE_RELEASE}       \
    --options enable_clang_tidy=${ENABLE_CLANG_TIDY}     \
    --options clang_tidy_path=${CLANG_TIDY_PATH}         \

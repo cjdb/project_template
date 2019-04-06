@@ -87,7 +87,7 @@ function(add_impl_custom_target_settings)
    add_impl_linkage("${settings_TARGET}" "${settings_SCOPE}" "${settings_LINK}")
 endfunction()
 
-macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
+macro(PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
    set(optional_values "")
    set(single_value_args TARGET)
    set(multi_value_args
@@ -132,12 +132,8 @@ endmacro()
 # \param target The target to apply the target to.
 #
 function(add_impl)
-   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS_LIBRARIES(${ARGN})
+   PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS_LIBRARIES(${ARGN})
 
-   add_impl_prefix_include(
-      "${add_target_args_TARGET}"
-      PUBLIC
-      "${add_target_args_PUBLIC_PREFIX_INCLUDE}")
    add_impl_prefix_include(
       "${add_target_args_TARGET}"
       PRIVATE
@@ -146,11 +142,11 @@ function(add_impl)
       "${add_target_args_TARGET}"
       INTERFACE
       "${add_target_args_INTERFACE_PREFIX_INCLUDE}")
-
-   add_impl_prefix_options(
+   add_impl_prefix_include(
       "${add_target_args_TARGET}"
       PUBLIC
-      "${add_target_args_PUBLIC_PREFIX_COMPILER_OPTIONS}")
+      "${add_target_args_PUBLIC_PREFIX_INCLUDE}")
+
    add_impl_prefix_options(
       "${add_target_args_TARGET}"
       PRIVATE
@@ -159,6 +155,10 @@ function(add_impl)
       "${add_target_args_TARGET}"
       INTERFACE
       "${add_target_args_INTERFACE_PREFIX_COMPILER_OPTIONS}")
+   add_impl_prefix_options(
+      "${add_target_args_TARGET}"
+      PUBLIC
+      "${add_target_args_PUBLIC_PREFIX_COMPILER_OPTIONS}")
 
    # Warnings
    target_compile_options("${add_target_args_TARGET}" PRIVATE
@@ -212,45 +212,41 @@ function(add_impl)
          -Wno-c++98-compat
          -Wno-c++98-compat-pedantic
          -Wno-padded>)
-   # Warnings as errors
+   # Non-warning compiler options
    target_compile_options("${add_target_args_TARGET}" PRIVATE
       $<$<CXX_COMPILER_ID:MSVC>:
-         /WX>
-      $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-         -Werror>)
-   # Strict C++
-   target_compile_options("${add_target_args_TARGET}" PRIVATE
-      $<$<CXX_COMPILER_ID:MSVC>:
-            /permissive-
+         /WX            # Warnings as errors
+         /permissive-   # Strict C++ mode
       >
       $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-         -pedantic
-      >
-   )
-   # Compiler features
-   target_compile_options("${add_target_args_TARGET}" PRIVATE
-      $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-         -fdiagnostics-color=always
-         -fvisibility=default
-         -fstack-protector
+         -Werror                    # Warnings as errors
+         -pedantic                  # Strict C++ mode
+         -fdiagnostics-color=always # Get good diagnostic highlighting
+         -fvisibility=default       # Default visibility mode
+         -fstack-protector          # Buffer overflow protection
          $<$<CONFIG:Debug>:
-            -fstack-protector-all>
+            -fstack-protector-all>  # Stronger buffer overflow protection
       >)
 
    target_include_directories("${add_target_args_TARGET}" PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
+   if(${${PROJECT_NAME}_CODE_COVERAGE})
+      target_link_libraries("${add_target_args_TARGET}" PRIVATE CodeCoverage::all)
+   endif()
+
+   message(STATUS "lololol ${${PROJECT_NAME}_SANITIZE_RELEASE}")
    target_link_libraries("${add_target_args_TARGET}" PRIVATE
-      $<$<BOOL:${${PROJECT_NAME}_CODE_COVERAGE}>:CodeCoverage::all>
       $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:Sanitizer::all>
       $<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${Sanitizer_ControlFlowIntegrity_FOUND}>>:Sanitizer::ControlFlowIntegrity>)
 
-   target_compile_options(
-      "${add_target_args_TARGET}" PRIVATE
-      $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:
-         $<$<OR:$<BOOL:${Sanitizer_Memory_FOUND}>,$<BOOL:${Sanitizer_MemoryWithOrigins_FOUND}>>:
+   if((${Sanitizer_Memory_FOUND}) OR (${Sanitizer_MemoryWithOrigins_FOUND}))
+      target_compile_options(
+         "${add_target_args_TARGET}" PRIVATE
+         $<$<OR:$<CONFIG:Debug>,$<BOOL:${${PROJECT_NAME}_SANITIZE_RELEASE}>>:
             -fno-omit-frame-pointer -fno-optimize-sibling-calls
             $<$<BOOL:${Sanitizer_MemoryWithOrigins_FOUND}>:
-               -fsanitize-memory-track-origins=2>>>)
+               -fsanitize-memory-track-origins=2>>)
+   endif()
 
    add_impl_custom_target_settings(
       TARGET         "${add_target_args_TARGET}"
@@ -293,7 +289,7 @@ function(name_target filename)
    set(target "${sublibrary}" PARENT_SCOPE)
 endfunction()
 
-macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
+macro(PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS)
    set(optional_values "")
    set(single_value_args FILENAME LIBRARY_TYPE)
    set(multi_value_args
@@ -334,14 +330,14 @@ macro(BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS)
       ${ARGN})
 
    if(${add_target_args_FILENAME} STREQUAL "")
-      BASIC_PROJECT_MULTILINE_STRING(
+      PROJECT_TEMPLATE_MULTILINE_STRING(
          error
          "FILENAME is not set. Cannot build a target without a filename.")
       message(FATAL_ERROR "${error}")
    endif()
 endmacro()
 
-macro(BASIC_PROJECT_CALL_ADD_IMPL)
+macro(PROJECT_TEMPLATE_CALL_ADD_IMPL)
    add_impl(
       TARGET "${target}"
 
@@ -378,17 +374,17 @@ endmacro()
 # \see add_${PROJECT_NAME}_executable
 #
 function(add_project_template_executable_impl)
-   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
+   PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
    name_target("${add_target_args_FILENAME}")
    add_executable("${target}" "${add_target_args_FILENAME}")
-   BASIC_PROJECT_CALL_ADD_IMPL()
+   PROJECT_TEMPLATE_CALL_ADD_IMPL()
 endfunction()
 
 # \see add_${PROJECT_NAME}_library
 #
 function(add_project_template_library_impl)
-   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
+   PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS(${ARGN})
 
    name_target("${add_target_args_FILENAME}")
 
@@ -399,7 +395,7 @@ function(add_project_template_library_impl)
    endif()
 
    add_library("${target}" ${add_target_args_LIBRARY_TYPE} "${add_target_args_FILENAME}")
-   BASIC_PROJECT_CALL_ADD_IMPL()
+   PROJECT_TEMPLATE_CALL_ADD_IMPL()
 endfunction()
 
 # \see add_${PROJECT_NAME}_test
@@ -407,7 +403,7 @@ endfunction()
 function(add_project_template_test_impl)
    add_project_template_executable_impl(${ARGN})
 
-   BASIC_PROJECT_EXTRACT_ADD_TARGET_ARGS(${ARGN})
+   PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS(${ARGN})
    name_target("${add_target_args_FILENAME}")
    add_test("test.${target}" "${target}")
 endfunction()

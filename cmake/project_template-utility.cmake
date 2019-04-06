@@ -16,7 +16,7 @@
 
 # Allows a long string to be split over multiple lines.
 #
-macro(BASIC_PROJECT_MULTILINE_STRING name)
+macro(PROJECT_TEMPLATE_MULTILINE_STRING name)
    set(${name} ${ARGN})
    string(REPLACE ":" " " ${name} ${${name}})
 endmacro()
