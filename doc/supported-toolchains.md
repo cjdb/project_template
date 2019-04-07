@@ -48,18 +48,6 @@ they support.
       <th><a href="https://libcxx.llvm.org/">libc++</a> with MemorySanitizer</th>
    </tr>
    <tr>
-      <td align="center">GCC 5</td>
-      <td align="center">✔️</td>
-      <td align="center">❌</td>
-      <td align="center">❌</td>
-   </tr>
-   <tr>
-      <td align="center">GCC 6</td>
-      <td align="center">✔️</td>
-      <td align="center">❌</td>
-      <td align="center">❌</td>
-   </tr>
-   <tr>
       <td align="center">GCC 7</td>
       <td align="center">✔️</td>
       <td align="center">❌</td>
@@ -70,24 +58,6 @@ they support.
       <td align="center">✔️</td>
       <td align="center">❌</td>
       <td align="center">❌</td>
-   </tr>
-   <tr>
-      <td align="center">Clang 4</td>
-      <td align="center">✔️</td>
-      <td align="center">Requires <a href="https://libcxxabi.llvm.org/">libc++abi</a></td>
-      <td align="center">Requires <a href="https://libcxxabi.llvm.org/">libc++abi</a></td>
-   </tr>
-   <tr>
-      <td align="center">Clang 5</td>
-      <td align="center">✔️</td>
-      <td align="center">Requires <a href="https://libcxxabi.llvm.org/">libc++abi</a></td>
-      <td align="center">Requires <a href="https://libcxxabi.llvm.org/">libc++abi</a></td>
-   </tr>
-   <tr>
-      <td align="center">Clang 6</td>
-      <td align="center">✔️</td>
-      <td align="center">Requires <a href="https://libcxxabi.llvm.org/">libc++abi</a></td>
-      <td align="center">Requires <a href="https://libcxxabi.llvm.org/">libc++abi</a></td>
    </tr>
    <tr>
       <td align="center">Clang 7</td>
@@ -110,18 +80,6 @@ they support.
    <tr>
       <td align="center">MSVC 2019</td>
       <td align="center">❌</td>
-      <td align="center">❌</td>
-      <td align="center">❌</td>
-   </tr>
-   <tr>
-      <td align="center">MSYS2 GCC 5</td>
-      <td align="center">✔️</td>
-      <td align="center">❌</td>
-      <td align="center">❌</td>
-   </tr>
-   <tr>
-      <td align="center">MSYS2 GCC 6</td>
-      <td align="center">✔️</td>
       <td align="center">❌</td>
       <td align="center">❌</td>
    </tr>
