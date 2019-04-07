@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-function(add_impl_linkage target scope to_link)
+function(add_impl_libraries target scope to_link)
    if(to_link)
       message(STATUS "Linking `${to_link}` with ${scope} scope, against ${target}.")
       target_link_libraries("${target}" ${scope} "${to_link}")
@@ -84,7 +84,7 @@ function(add_impl_custom_target_settings)
    add_impl_suffix_options("${settings_TARGET}" "${settings_SCOPE}" "${settings_SUFFIX_OPTIONS}")
    add_impl_enable_features("${settings_TARGET}" "${settings_SCOPE}" "${settings_ENABLE_FEATURES}")
    add_impl_define_macros("${settings_TARGET}" "${settings_SCOPE}" "${settings_DEFINITIONS}")
-   add_impl_linkage("${settings_TARGET}" "${settings_SCOPE}" "${settings_LINK}")
+   add_impl_libraries("${settings_TARGET}" "${settings_SCOPE}" "${settings_LINK}")
 endfunction()
 
 macro(PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
@@ -100,9 +100,9 @@ macro(PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS_LIBRARIES)
       INTERFACE_INCLUDE
       PUBLIC_INCLUDE
 
-      LINKAGE
-      INTERFACE_LINKAGE
-      PUBLIC_LINKAGE
+      LIBRARIES
+      INTERFACE_LIBRARIES
+      PUBLIC_LIBRARIES
 
       PREFIX_COMPILER_OPTIONS
       INTERFACE_PREFIX_COMPILER_OPTIONS
@@ -250,20 +250,20 @@ function(add_impl)
 
    add_impl_custom_target_settings(
       TARGET         "${add_target_args_TARGET}"
-      SCOPE PUBLIC
-      SUFFIX_INCLUDE "${add_target_args_PUBLIC_INCLUDE}"
-      SUFFIX_OPTIONS "${add_target_args_PUBLIC_COMPILER_OPTIONS}"
-      ENABLE_FEATURE "${add_target_args_PUBLIC_COMPILER_FEATURES}"
-      DEFINITIONS    "${add_target_args_PUBLIC_COMPILER_DEFINITIONS}"
-      LINK           "${add_target_args_PUBLIC_LINKAGE}")
-   add_impl_custom_target_settings(
-      TARGET         "${add_target_args_TARGET}"
       SCOPE PRIVATE
       SUFFIX_INCLUDE "${add_target_args_INCLUDE}"
       SUFFIX_OPTIONS "${add_target_args_COMPILER_OPTIONS}"
       ENABLE_FEATURE "${add_target_args_COMPILER_FEATURES}"
       DEFINITIONS    "${add_target_args_COMPILER_DEFINITIONS}"
-      LINK           "${add_target_args_LINKAGE}")
+      LINK           "${add_target_args_LIBRARIES}")
+   add_impl_custom_target_settings(
+      TARGET         "${add_target_args_TARGET}"
+      SCOPE PUBLIC
+      SUFFIX_INCLUDE "${add_target_args_PUBLIC_INCLUDE}"
+      SUFFIX_OPTIONS "${add_target_args_PUBLIC_COMPILER_OPTIONS}"
+      ENABLE_FEATURE "${add_target_args_PUBLIC_COMPILER_FEATURES}"
+      DEFINITIONS    "${add_target_args_PUBLIC_COMPILER_DEFINITIONS}"
+      LINK           "${add_target_args_PUBLIC_LIBRARIES}")
    add_impl_custom_target_settings(
       TARGET         "${add_target_args_TARGET}"
       SCOPE INTERFACE
@@ -271,7 +271,7 @@ function(add_impl)
       SUFFIX_OPTIONS "${add_target_args_INTERFACE_COMPILER_OPTIONS}"
       ENABLE_FEATURE "${add_target_args_INTERFACE_COMPILER_FEATURES}"
       DEFINITIONS    "${add_target_args_INTERFACE_COMPILER_DEFINITIONS}"
-      LINK           "${add_target_args_INTERFACE_LINKAGE}")
+      LINK           "${add_target_args_INTERFACE_LIBRARIES}")
 endfunction()
 
 # \brief Produces a target name for compiling a translation unit.
@@ -302,9 +302,9 @@ macro(PROJECT_TEMPLATE_EXTRACT_ADD_TARGET_ARGS)
       INCLUDE
       INTERFACE_INCLUDE
 
-      PUBLIC_LINKAGE
-      LINKAGE
-      INTERFACE_LINKAGE
+      LIBRARIES
+      PUBLIC_LIBRARIES
+      INTERFACE_LIBRARIES
 
       PUBLIC_PREFIX_COMPILER_OPTIONS
       PREFIX_COMPILER_OPTIONS
@@ -349,9 +349,9 @@ macro(PROJECT_TEMPLATE_CALL_ADD_IMPL)
       INTERFACE_INCLUDE "${add_target_args_INTERFACE_INCLUDE}"
       PUBLIC_INCLUDE "${add_target_args_PUBLIC_INCLUDE}"
 
-      LINKAGE "${add_target_args_LINKAGE}"
-      INTERFACE_LINKAGE "${add_target_args_INTERFACE_LINKAGE}"
-      PUBLIC_LINKAGE "${add_target_args_PUBLIC_LINKAGE}"
+      LIBRARIES "${add_target_args_LIBRARIES}"
+      INTERFACE_LIBRARIES "${add_target_args_INTERFACE_LIBRARIES}"
+      PUBLIC_LIBRARIES "${add_target_args_PUBLIC_LIBRARIES}"
 
       PREFIX_COMPILER_OPTIONS "${add_target_args_PREFIX_COMPILER_OPTIONS}"
       INTERFACE_PREFIX_COMPILER_OPTIONS "${add_target_args_INTERFACE_PREFIX_COMPILER_OPTIONS}"
