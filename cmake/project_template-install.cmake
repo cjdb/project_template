@@ -28,5 +28,8 @@ install(
    EXPORT "${PROJECT_NAME}-targets"
    FILE "${PROJECT_NAME}-config.cmake"
    DESTINATION "lib/cmake/${PROJECT_NAME}")
+install(DIRECTORY "include/" DESTINATION "include" FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "include/" DESTINATION "include" FILES_MATCHING PATTERN "*.hh")
 install(DIRECTORY "include/" DESTINATION "include" FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY "include/" DESTINATION "include" FILES_MATCHING PATTERN "*.hxx")
 export(EXPORT "${PROJECT_NAME}-targets" FILE "${PROJECT_NAME}-config.cmake")
