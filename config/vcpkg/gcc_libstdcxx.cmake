@@ -19,31 +19,28 @@ set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+set(VCPKG_INSTALL_OPTIONS "--clean-after-build")
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(VCPKG_TARGET_TRIPLET gcc_libstdcxx)
+
+set(TRIPLE x86_64-unknown-linux-gnu)
+set(TOOLCHAIN_ROOT "/usr")
+set(CMAKE_C_COMPILER "${TOOLCHAIN_ROOT}/bin/gcc")
+set(CMAKE_CXX_COMPILER "${TOOLCHAIN_ROOT}/bin/g++")
+set(CMAKE_CXX_COMPLIER_TARGET ${TRIPLE})
+
+set(CMAKE_AR "${TOOLCHAIN_ROOT}/bin/ar")
+set(CMAKE_RC_COMPILER "${TOOLCHAIN_ROOT}/bin/rc")
+set(CMAKE_RANLIB "${TOOLCHAIN_ROOT}/bin/ranlib")
 
 string(
-   JOIN " " CMAKE_CXX_FLAGS
-   "${CMAKE_CXX_FLAGS}"
-   -fvisibility=hidden
-   -fstack-protector
-   -fdiagnostics-color=always
-)
-
-string(
-   JOIN " " CMAKE_CXX_FLAGS_DEBUG
-   "${CMAKE_CXX_FLAGS_DEBUG}"
-   -fsanitize=address,undefined
-   -fstack-protector-strong
-)
-
-set(CMAKE_CXX_COMPILER "g++")
-set(PROJECT_TEMPLATE_CXX_COMPILER_MINIMUM_VERSION 11)
-
-set(CMAKE_AR "ar")
-set(CMAKE_RANLIB "ranlib")
-
-string(
-   JOIN " " CMAKE_EXE_LINKER_FLAGS
-   "${CMAKE_EXE_LINKER_FLAGS}"
-   -fuse-ld=gold
+  JOIN " " CMAKE_CXX_FLAGS
+  -fdiagnostics-color=always
+  -fstack-protector-strong
+  -fvisibility=hidden
+  -rtlib=compiler-rt
+  -unwindlib=libunwind
+  -pedantic
+  -ftemplate-backtrace-limit=0
+  -fuse-ld=gold
 )
