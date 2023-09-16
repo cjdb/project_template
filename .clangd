@@ -1,0 +1,30 @@
+CompileFlags:
+  Add:
+    - -std=c++2b
+    - -ferror-limit=0
+    - -nostdinc++
+    - -nostdlib++
+    - -Iinclude
+    - -pedantic
+    - -Werror
+    - -Wall
+    - -Wextra
+    - -Wcast-align
+    - -Wconversion
+    - -Wdouble-promotion
+    - -Wnon-virtual-dtor
+    - -Wold-style-cast
+    - -Woverloaded-virtual
+    - -Wshadow
+    - -Wsign-conversion
+    - -Wsign-promo
+    - -Wunused
+    - -Wformat=2
+    - -Wodr
+    - -Wattributes
+    - -Wnull-dereference
+  Remove:
+    - -fmodules
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None
